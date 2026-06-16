@@ -9,8 +9,9 @@ FreeLanding is a Next.js application for building and editing professional landi
 - ESLint with Next.js Core Web Vitals and TypeScript rules.
 - Minimal public home page.
 - Supabase browser, server, and server-only admin client factories.
+- Initial Supabase schema migration with RLS for content, leads, admin profiles, and media metadata.
 
-Supabase schema, admin authentication, editable content, uploads, leads, Google Analytics, and WhatsApp integration are planned but not implemented yet.
+Admin authentication, editable content screens, uploads, lead form handling, Google Analytics, and WhatsApp integration are planned but not implemented yet.
 
 ## Requirements
 
@@ -73,6 +74,26 @@ Supabase clients live under `src/lib/supabase/`:
 - `client.ts`: browser client using public env values only.
 - `server.ts`: per-request server client using cookies from `next/headers`.
 - `admin.ts`: service-role client guarded by `server-only`.
+
+## Database
+
+The initial schema is versioned in `supabase/migrations/20260616000000_initial_schema.sql`.
+
+It creates:
+
+- `profiles` for admin/editor roles.
+- `landing_pages` and `landing_settings` for page-level content and SEO.
+- `system_modules`, `benefits`, and `faqs` for ordered public sections.
+- `leads` for contact requests, readable only by admins through RLS.
+- `media_assets` for uploaded image metadata, restricted to `landing-images` assets and public reads only when `is_public = true`.
+
+RLS allows public reads only for published/active landing content. Admin writes require an authenticated user with `profiles.role = 'admin'`. The first admin profile must be inserted manually through trusted SQL or a service-role path before the admin UI can authorize users.
+
+To lint the database locally, start the Supabase local stack first and then run:
+
+```bash
+npx supabase db lint --local
+```
 
 ## Security Notes
 
