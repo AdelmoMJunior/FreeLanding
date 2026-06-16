@@ -10,8 +10,9 @@ FreeLanding is a Next.js application for building and editing professional landi
 - Minimal public home page.
 - Supabase browser, server, and server-only admin client factories.
 - Initial Supabase schema migration with RLS for content, leads, admin profiles, and media metadata.
+- Initial admin login flow with server-side admin authorization.
 
-Admin authentication, editable content screens, uploads, lead form handling, Google Analytics, and WhatsApp integration are planned but not implemented yet.
+Editable content screens, uploads, lead form handling, Google Analytics, and WhatsApp integration are planned but not implemented yet.
 
 ## Requirements
 
@@ -52,13 +53,14 @@ Open `http://localhost:3000`.
 
 ```bash
 npm run lint
+npm test
 npm run typecheck
 npm run build
 ```
 
 `npm run typecheck` runs `next typegen` before `tsc --noEmit` because Next.js 16 generates route types under `.next/`.
 
-There is no test command yet. Add one when validation, data access, authentication, forms, or other testable logic is introduced.
+`npm test` runs Vitest unit tests for logic that can be checked without binding to Next.js route handlers.
 
 ## Environment Variables
 
@@ -98,6 +100,7 @@ npx supabase db lint --local
 ## Security Notes
 
 - Admin routes and mutations must verify authorization on the server.
+- `/admin` is session-checked by `src/proxy.ts`; protected admin pages still call `requireAdmin()` for role authorization.
 - Public forms, uploads, and admin writes must validate input server-side.
 - Do not allow arbitrary upload paths or unrestricted file types.
 - Avoid rendering editable HTML until sanitization rules are explicitly implemented.
