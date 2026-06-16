@@ -8,8 +8,9 @@ FreeLanding is a Next.js application for building and editing professional landi
 - Tailwind CSS v4 through PostCSS.
 - ESLint with Next.js Core Web Vitals and TypeScript rules.
 - Minimal public home page.
+- Supabase browser, server, and server-only admin client factories.
 
-Supabase, admin authentication, editable content, uploads, leads, Google Analytics, and WhatsApp integration are planned but not implemented yet.
+Supabase schema, admin authentication, editable content, uploads, leads, Google Analytics, and WhatsApp integration are planned but not implemented yet.
 
 ## Requirements
 
@@ -36,7 +37,7 @@ Windows cmd:
 copy .env.example .env.local
 ```
 
-The current app shell does not require environment variables to run or build.
+The current public landing does not call Supabase, so the app still builds without real environment values. Supabase helper functions throw clear errors if they are used without the required variables.
 
 ## Development
 
@@ -66,6 +67,12 @@ The placeholders in `.env.example` are for upcoming Supabase, analytics, and ser
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: public Supabase anon key.
 - `SUPABASE_SERVICE_ROLE_KEY`: server-only Supabase key; never import into client components.
 - `NEXT_PUBLIC_GA_ID`: optional Google Analytics measurement ID.
+
+Supabase clients live under `src/lib/supabase/`:
+
+- `client.ts`: browser client using public env values only.
+- `server.ts`: per-request server client using cookies from `next/headers`.
+- `admin.ts`: service-role client guarded by `server-only`.
 
 ## Security Notes
 
