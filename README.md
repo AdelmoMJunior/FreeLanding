@@ -111,7 +111,7 @@ Local Docker run example:
 docker run --rm -p 3000:3000 --env-file .env.local freelanding
 ```
 
-Coolify Docker Compose service file is available at `docker-compose.yml`. In Coolify, set the same variables in the environment/secrets screen; do not commit real values.
+Coolify Docker Compose service file is available at `docker-compose.yml`. It uses the public GitHub repository as the remote Docker build context, so you can paste the compose file in Coolify/Docker and it will fetch the source from GitHub. Set the same variables in the environment/secrets screen; do not commit real values.
 
 ## Environment Variables
 

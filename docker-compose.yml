@@ -1,7 +1,7 @@
 services:
   freelanding:
     build:
-      context: .
+      context: https://github.com/AdelmoMJunior/FreeLanding.git#master
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
