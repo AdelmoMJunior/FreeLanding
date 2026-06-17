@@ -1,5 +1,6 @@
 services:
   freelanding:
+    pull_policy: build
     build:
       context: https://github.com/AdelmoMJunior/FreeLanding.git#master
       dockerfile: Dockerfile
