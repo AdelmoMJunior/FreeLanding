@@ -31,6 +31,9 @@ describe("buildLandingContent", () => {
         whatsapp_message: "Olá, quero saber mais sobre a oferta.",
         contact_email: "comercial@example.com",
         contact_phone: "(11) 98888-7777",
+        company_name: "Minha Marca",
+        logo_path: "/logo.png",
+        favicon_path: "/favicon.png",
       },
     });
 
@@ -49,6 +52,9 @@ describe("buildLandingContent", () => {
     });
     expect(content.cta.title).toBe("Vamos conversar sobre sua necessidade?");
     expect(content.cta.description).toBe("Envie seus dados para receber um retorno objetivo da equipe comercial.");
+    expect(content.company).toBe("Minha Marca");
+    expect(content.logoPath).toBe("/logo.png");
+    expect(content.faviconPath).toBe("/favicon.png");
     expect(content.whatsapp).toEqual({
       href: "https://wa.me/5511988887777?text=Ol%C3%A1%2C%20quero%20saber%20mais%20sobre%20a%20oferta.",
       label: "Abrir conversa no WhatsApp",

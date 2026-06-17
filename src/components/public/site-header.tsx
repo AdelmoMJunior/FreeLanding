@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import type { PublicLandingContent } from "@/lib/landing/content";
 
 type SiteHeaderProps = Readonly<{
@@ -5,6 +7,9 @@ type SiteHeaderProps = Readonly<{
 }>;
 
 export function SiteHeader({ content }: SiteHeaderProps) {
+  const fallbackInitial = content.company.trim().charAt(0).toUpperCase() || "F";
+  const headerIconPath = content.faviconPath ?? content.logoPath;
+
   return (
     <>
       <a
@@ -16,7 +21,22 @@ export function SiteHeader({ content }: SiteHeaderProps) {
       <header className="absolute inset-x-0 top-0 z-10 px-5 py-5 sm:px-8 lg:px-10" aria-label="Cabeçalho do site">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 rounded-full border border-white/10 bg-slate-950/55 px-4 py-3 text-white shadow-2xl shadow-slate-950/20 backdrop-blur md:px-5">
           <a href="#top" className="flex min-w-0 items-center gap-3 font-bold tracking-tight" aria-label={`${content.company} — ir para o início`}>
-            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-[var(--brand-color)] text-[var(--brand-contrast)]">F</span>
+            {headerIconPath ? (
+              <span className="relative size-9 shrink-0 overflow-hidden rounded-full bg-white/95 ring-1 ring-white/20">
+                <Image
+                  src={headerIconPath}
+                  alt={`Ícone ${content.company}`}
+                  fill
+                  sizes="36px"
+                  className="object-contain p-1"
+                />
+              </span>
+            ) : (
+              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-[var(--brand-color)] text-[var(--brand-contrast)]">
+                {fallbackInitial}
+              </span>
+            )}
+            <span className="truncate">{content.company}</span>
           </a>
           <a
             href="#contato"

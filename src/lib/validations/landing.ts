@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { safeImagePathOrNull } from "@/lib/landing/safe-image";
 import { isSafeLandingHref, safeLandingHrefOrFallback } from "@/lib/landing/safe-url";
 
 export type LandingSettingsFormValues = Readonly<{
@@ -20,6 +21,9 @@ export type LandingSettingsFormValues = Readonly<{
   brandColor: string;
   notifyLeadsByEmail: boolean;
   leadNotificationEmail: string;
+  companyName: string;
+  logoPath: string;
+  faviconPath: string;
 }>;
 
 export type LandingSettingsField = keyof LandingSettingsFormValues;
@@ -61,6 +65,16 @@ const brandColorSchema = z
   .toLowerCase()
   .regex(/^#[0-9a-f]{6}$/, "Informe uma cor hexadecimal válida, por exemplo #10b981.");
 
+const rootImagePathPattern = /^\/(?!api\/|admin\/)[^?#]+\.(?:jpe?g|png|webp|svg|ico)$/i;
+
+const optionalImagePathSchema = z
+  .string()
+  .trim()
+  .max(512, "O caminho não pode passar de 512 caracteres.")
+  .refine((value) => !value || (safeImagePathOrNull(value) === value && (!value.startsWith("/") || rootImagePathPattern.test(value))), {
+    message: "Use uma imagem enviada pelo painel ou um caminho começando com /.",
+  });
+
 const whatsappNumberSchema = z
   .string()
   .trim()
@@ -98,6 +112,9 @@ const landingSettingsSchema = z.object({
   brandColor: brandColorSchema,
   notifyLeadsByEmail: z.boolean(),
   leadNotificationEmail: optionalEmailSchema,
+  companyName: requiredText("Informe o nome da marca.", 80),
+  logoPath: optionalImagePathSchema,
+  faviconPath: optionalImagePathSchema,
 }).superRefine((values, context) => {
   if (values.notifyLeadsByEmail && !values.leadNotificationEmail) {
     context.addIssue({
@@ -148,6 +165,9 @@ export function parseLandingSettingsForm(formData: FormData): LandingSettingsFor
     brandColor: getStringField(formData, "brandColor"),
     notifyLeadsByEmail: formData.get("notifyLeadsByEmail") === "on" || formData.get("notifyLeadsByEmail") === "true",
     leadNotificationEmail: getStringField(formData, "leadNotificationEmail"),
+    companyName: getStringField(formData, "companyName"),
+    logoPath: getStringField(formData, "logoPath"),
+    faviconPath: getStringField(formData, "faviconPath"),
   });
 
   if (!result.success) {

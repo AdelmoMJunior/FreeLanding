@@ -25,6 +25,9 @@ type LandingSettingsRecord = Readonly<{
   contact_email: string;
   contact_phone: string;
   brand_color?: string | null;
+  company_name?: string | null;
+  logo_path?: string | null;
+  favicon_path?: string | null;
 }>;
 
 type LandingModuleRecord = Readonly<{
@@ -57,7 +60,7 @@ export type LandingAction = Readonly<{
 }>;
 
 export type PublicLandingContent = Readonly<{
-  company: typeof landingContent.company;
+  company: string;
   eyebrow: typeof landingContent.eyebrow;
   hero: Readonly<{
     title: string;
@@ -91,6 +94,8 @@ export type PublicLandingContent = Readonly<{
     href: string;
     label: string;
   }> | null;
+  logoPath: string | null;
+  faviconPath: string | null;
 }>;
 
 type BuildLandingContentInput = Readonly<{
@@ -236,7 +241,7 @@ export function buildLandingContent({
   };
 
   return {
-    company: landingContent.company,
+    company: textOrFallback(settings?.company_name, landingContent.company),
     eyebrow: landingContent.eyebrow,
     hero: {
       title: textOrFallback(settings?.headline, landingContent.hero.title),
@@ -267,5 +272,7 @@ export function buildLandingContent({
       color: brandColorOrFallback(settings?.brand_color),
     },
     whatsapp: buildWhatsappLink(settings),
+    logoPath: safeImagePathOrNull(settings?.logo_path),
+    faviconPath: safeImagePathOrNull(settings?.favicon_path),
   };
 }

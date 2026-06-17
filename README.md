@@ -72,6 +72,45 @@ npm run build
 
 `npm test` runs Vitest unit tests for logic that can be checked without binding to Next.js route handlers.
 
+## Docker / Coolify
+
+The app includes a production `Dockerfile` using Next.js standalone output. Coolify can build from this repository with port `3000`.
+
+Required runtime environment variables:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+
+Optional runtime environment variables:
+
+- `NEXT_PUBLIC_GA_ID`
+- `LEAD_FORM_TRUST_PROXY_HEADERS`
+- `RESEND_API_KEY`
+- `RESEND_FROM_EMAIL`
+
+Set these public values as Docker build arguments in Coolify too, because Next.js uses them during `next build`:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_GA_ID`
+
+Local Docker build example:
+
+```bash
+docker build \
+  --build-arg NEXT_PUBLIC_SUPABASE_URL="$NEXT_PUBLIC_SUPABASE_URL" \
+  --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY="$NEXT_PUBLIC_SUPABASE_ANON_KEY" \
+  --build-arg NEXT_PUBLIC_GA_ID="$NEXT_PUBLIC_GA_ID" \
+  -t freelanding .
+```
+
+Local Docker run example:
+
+```bash
+docker run --rm -p 3000:3000 --env-file .env.local freelanding
+```
+
 ## Environment Variables
 
 The placeholders in `.env.example` configure the current Supabase, analytics, and server-side features. Do not commit real values.

@@ -297,9 +297,7 @@ export function LeadForm() {
           role={status === "error" ? "alert" : "status"}
           aria-live="polite"
           className={`mt-5 rounded-2xl border px-4 py-3 text-sm font-semibold ${
-            status === "success"
-              ? "border-emerald-200 bg-emerald-50 text-emerald-900"
-              : status === "error"
+            status === "error"
                 ? "border-red-200 bg-red-50 text-red-800"
                 : "border-slate-200 bg-slate-50 text-slate-700"
           }`}

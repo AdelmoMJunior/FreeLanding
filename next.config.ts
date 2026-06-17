@@ -24,6 +24,7 @@ function getSupabaseImageRemotePatterns(): NonNullable<NextConfig["images"]>["re
 }
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   async headers() {
     return [
       {

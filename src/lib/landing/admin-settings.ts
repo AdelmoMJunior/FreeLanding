@@ -7,6 +7,7 @@ import {
   type EditableLandingPage,
 } from "@/lib/landing/admin-page";
 import { safeLandingHrefOrFallback } from "@/lib/landing/safe-url";
+import { deleteLandingImageByPublicUrl } from "@/lib/storage/images";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { LandingSettingsFormValues } from "@/lib/validations/landing";
 
@@ -26,6 +27,9 @@ type EditableLandingSettings = Readonly<{
   brand_color: string;
   notify_leads_by_email: boolean;
   lead_notification_email: string;
+  company_name: string;
+  logo_path: string | null;
+  favicon_path: string | null;
 }>;
 
 export const defaultLandingSettingsFormValues: LandingSettingsFormValues = {
@@ -46,12 +50,45 @@ export const defaultLandingSettingsFormValues: LandingSettingsFormValues = {
   brandColor: "#10b981",
   notifyLeadsByEmail: false,
   leadNotificationEmail: "",
+  companyName: landingContent.company,
+  logoPath: "",
+  faviconPath: "",
 };
 
 function textOrFallback(value: string | null | undefined, fallback: string) {
   const trimmed = value?.trim();
 
   return trimmed ? trimmed : fallback;
+}
+
+function isMissingLandingSettingsColumnError(error: { message?: string } | null | undefined) {
+  const message = error?.message?.toLowerCase() ?? "";
+
+  return [
+    "company_name",
+    "logo_path",
+    "favicon_path",
+    "cta_title",
+    "cta_description",
+    "brand_color",
+    "notify_leads_by_email",
+    "lead_notification_email",
+  ].some((column) => message.includes(column));
+}
+
+function getLandingSettingsMigrationError() {
+  return new Error("Há migrations de configurações da landing pendentes no Supabase. Aplique as migrations mais recentes e tente salvar novamente.");
+}
+
+function getSupabaseErrorMessage(error: { code?: string; message?: string; details?: string; hint?: string }) {
+  return [
+    error.code ? `code=${error.code}` : null,
+    error.message ? `message=${error.message}` : null,
+    error.details ? `details=${error.details}` : null,
+    error.hint ? `hint=${error.hint}` : null,
+  ]
+    .filter(Boolean)
+    .join("; ");
 }
 
 function toFormValues(
@@ -91,6 +128,9 @@ function toFormValues(
     brandColor: textOrFallback(settings?.brand_color, defaultLandingSettingsFormValues.brandColor),
     notifyLeadsByEmail: settings?.notify_leads_by_email ?? false,
     leadNotificationEmail: textOrFallback(settings?.lead_notification_email, ""),
+    companyName: textOrFallback(settings?.company_name, defaultLandingSettingsFormValues.companyName),
+    logoPath: textOrFallback(settings?.logo_path, ""),
+    faviconPath: textOrFallback(settings?.favicon_path, ""),
   };
 }
 
@@ -105,7 +145,7 @@ export async function getLandingSettingsForAdmin() {
   const { data: settings, error: settingsError } = await supabase
     .from("landing_settings")
     .select(
-      "headline, subheadline, primary_cta_label, primary_cta_url, secondary_cta_label, secondary_cta_url, cta_title, cta_description, whatsapp_number, whatsapp_message, contact_email, contact_phone, brand_color, notify_leads_by_email, lead_notification_email",
+      "headline, subheadline, primary_cta_label, primary_cta_url, secondary_cta_label, secondary_cta_url, cta_title, cta_description, whatsapp_number, whatsapp_message, contact_email, contact_phone, brand_color, notify_leads_by_email, lead_notification_email, company_name, logo_path, favicon_path",
     )
     .eq("landing_page_id", page.id)
     .maybeSingle();
@@ -128,6 +168,16 @@ export async function saveLandingSettings(values: LandingSettingsFormValues) {
     throw new Error("Não foi possível salvar a página da landing.");
   }
 
+  const { data: currentSettings, error: currentSettingsError } = await supabase
+    .from("landing_settings")
+    .select("logo_path, favicon_path")
+    .eq("landing_page_id", pageId)
+    .maybeSingle();
+
+  if (isMissingLandingSettingsColumnError(currentSettingsError)) {
+    throw getLandingSettingsMigrationError();
+  }
+
   const { error: settingsError } = await supabase.from("landing_settings").upsert(
     {
       landing_page_id: pageId,
@@ -146,11 +196,29 @@ export async function saveLandingSettings(values: LandingSettingsFormValues) {
       brand_color: values.brandColor,
       notify_leads_by_email: values.notifyLeadsByEmail,
       lead_notification_email: values.leadNotificationEmail,
+      company_name: values.companyName,
+      logo_path: values.logoPath || null,
+      favicon_path: values.faviconPath || null,
     },
     { onConflict: "landing_page_id" },
   );
 
   if (settingsError) {
-    throw new Error("Não foi possível salvar as configurações da landing.");
+    console.error("Supabase landing_settings upsert failed.", settingsError);
+
+    if (isMissingLandingSettingsColumnError(settingsError)) {
+      throw getLandingSettingsMigrationError();
+    }
+
+    throw new Error(`Não foi possível salvar as configurações da landing. ${getSupabaseErrorMessage(settingsError)}`);
   }
+
+  await Promise.all([
+    currentSettings?.logo_path && currentSettings.logo_path !== values.logoPath
+      ? deleteLandingImageByPublicUrl(currentSettings.logo_path)
+      : Promise.resolve(),
+    currentSettings?.favicon_path && currentSettings.favicon_path !== values.faviconPath
+      ? deleteLandingImageByPublicUrl(currentSettings.favicon_path)
+      : Promise.resolve(),
+  ]);
 }

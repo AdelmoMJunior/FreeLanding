@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState, type ChangeEvent } from "react";
 
 import {
   saveLandingSettingsAction,
@@ -24,6 +24,41 @@ type FieldProps = Readonly<{
   helper?: string;
   type?: "color" | "email" | "tel" | "text" | "url";
   multiline?: boolean;
+}>;
+
+type UploadStatus = "idle" | "uploading" | "success" | "error";
+
+type UploadMessage = Readonly<{
+  status: UploadStatus;
+  text: string;
+}>;
+
+type UploadResponse = Readonly<{
+  imagePath?: unknown;
+  error?: unknown;
+}>;
+
+async function deleteUploadedImage(imagePath: string) {
+  if (!imagePath) {
+    return;
+  }
+
+  await fetch("/api/uploads", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ imagePath }),
+  }).catch(() => undefined);
+}
+
+type AssetUploadFieldProps = Readonly<{
+  name: "logoPath" | "faviconPath";
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  errors?: LandingSettingsFieldErrors;
+  helper: string;
+  uploadLabel: string;
+  altText: string;
 }>;
 
 const initialActionState: LandingSettingsActionState = {
@@ -91,11 +126,141 @@ function SettingsField({
   );
 }
 
+function AssetUploadField({
+  name,
+  label,
+  value,
+  onChange,
+  errors,
+  helper,
+  uploadLabel,
+  altText,
+}: AssetUploadFieldProps) {
+  const [uploadMessage, setUploadMessage] = useState<UploadMessage>({ status: "idle", text: "" });
+  const error = errors?.[name];
+  const describedBy = fieldDescriptionIds(name, helper, error);
+  const uploadId = `${name}-upload`;
+  const uploadStatusId = `${name}-upload-status`;
+
+  async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+
+    if (!file) {
+      return;
+    }
+
+    setUploadMessage({ status: "uploading", text: "Enviando imagem..." });
+
+    const uploadFormData = new FormData();
+    uploadFormData.append("file", file);
+    uploadFormData.append("altText", altText);
+
+    try {
+      const response = await fetch("/api/uploads", {
+        method: "POST",
+        body: uploadFormData,
+      });
+      const payload = (await response.json().catch(() => ({}))) as UploadResponse;
+
+      if (!response.ok) {
+        const message = typeof payload.error === "string" ? payload.error : "Não foi possível enviar a imagem.";
+        setUploadMessage({ status: "error", text: message });
+        return;
+      }
+
+      if (typeof payload.imagePath !== "string" || !payload.imagePath) {
+        setUploadMessage({ status: "error", text: "Upload concluído, mas o caminho não foi retornado." });
+        return;
+      }
+
+      await deleteUploadedImage(value);
+      onChange(payload.imagePath);
+      setUploadMessage({ status: "success", text: "Imagem enviada. Salve as configurações para publicar." });
+    } catch {
+      setUploadMessage({ status: "error", text: "Falha de conexão ao enviar a imagem. Tente novamente." });
+    }
+  }
+
+  return (
+    <div>
+      <label htmlFor={name} className="block text-sm font-black text-slate-900">
+        {label}
+      </label>
+      <div className="mt-2 grid gap-3 rounded-2xl border border-slate-200 bg-white p-3">
+        <input
+          id={name}
+          name={name}
+          type="text"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          aria-invalid={error ? "true" : undefined}
+          aria-describedby={describedBy || undefined}
+          className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition placeholder:text-slate-400 focus:border-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-100 aria-[invalid=true]:border-red-300 aria-[invalid=true]:focus:border-red-600 aria-[invalid=true]:focus:ring-red-100"
+        />
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <label
+            htmlFor={uploadId}
+            className={`inline-flex min-h-10 cursor-pointer items-center justify-center rounded-full border border-slate-200 bg-white px-4 text-xs font-black uppercase tracking-[0.14em] text-slate-700 transition hover:border-slate-950 hover:text-slate-950 ${uploadMessage.status === "uploading" ? "pointer-events-none opacity-60" : ""}`}
+          >
+            {uploadMessage.status === "uploading" ? "Enviando..." : uploadLabel}
+          </label>
+          <input
+            id={uploadId}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={handleFileChange}
+            disabled={uploadMessage.status === "uploading"}
+            aria-describedby={`${name}-helper ${uploadStatusId}`}
+            className="sr-only"
+          />
+          {value ? (
+            <button
+              type="button"
+              onClick={() => {
+                void deleteUploadedImage(value);
+                onChange("");
+              }}
+              className="inline-flex min-h-10 items-center justify-center rounded-full border border-red-200 bg-red-50 px-4 text-xs font-black uppercase tracking-[0.14em] text-red-700 transition hover:border-red-300 hover:bg-red-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-red-600"
+            >
+              Remover
+            </button>
+          ) : null}
+        </div>
+      </div>
+      <p id={`${name}-helper`} className="mt-2 text-xs leading-5 text-slate-500">
+        {helper}
+      </p>
+      {error ? (
+        <p id={`${name}-error`} className="mt-2 text-sm font-semibold text-red-700">
+          {error}
+        </p>
+      ) : null}
+      <p
+        id={uploadStatusId}
+        role="status"
+        aria-live="polite"
+        className={`mt-2 min-h-5 text-sm font-semibold ${
+          uploadMessage.status === "success"
+            ? "text-emerald-800"
+            : uploadMessage.status === "error"
+              ? "text-red-700"
+              : "text-slate-600"
+        }`}
+      >
+        {uploadMessage.text}
+      </p>
+    </div>
+  );
+}
+
 export function AdminSettingsForm({ initialValues }: AdminSettingsFormProps) {
   const [state, formAction, isPending] = useActionState(
     saveLandingSettingsAction,
     initialActionState,
   );
+  const [logoPath, setLogoPath] = useState(initialValues.logoPath);
+  const [faviconPath, setFaviconPath] = useState(initialValues.faviconPath);
   const fieldErrors = state.fieldErrors;
 
   useEffect(() => {
@@ -142,6 +307,54 @@ export function AdminSettingsForm({ initialValues }: AdminSettingsFormProps) {
             helper="Resumo da landing para buscadores e compartilhamentos."
             multiline
           />
+        </div>
+      </section>
+
+      <section
+        aria-labelledby="settings-brand-assets-title"
+        className="rounded-[1.75rem] border border-white bg-white/85 p-6 shadow-[0_18px_50px_rgba(15,23,42,0.07)]"
+      >
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1fr)] lg:items-start">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-800">
+              Marca
+            </p>
+            <h2 id="settings-brand-assets-title" className="mt-2 text-xl font-black tracking-tight text-slate-950">
+              Nome, logo e ícone do site
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              O nome aparece no cabeçalho. A logo substitui o ícone padrão e o favicon aparece na aba do navegador.
+            </p>
+          </div>
+          <div className="grid gap-5 rounded-3xl bg-slate-50 p-5">
+            <SettingsField
+              name="companyName"
+              label="Nome da marca"
+              defaultValue={initialValues.companyName}
+              errors={fieldErrors}
+              helper="Use o nome que deve aparecer na landing pública."
+            />
+            <AssetUploadField
+              name="logoPath"
+              label="Logo do cabeçalho"
+              value={logoPath}
+              onChange={setLogoPath}
+              errors={fieldErrors}
+              helper="Selecione JPEG, PNG ou WebP até 5 MB. O upload começa assim que o arquivo é escolhido."
+              uploadLabel="Selecionar logo"
+              altText={`Logo ${initialValues.companyName}`}
+            />
+            <AssetUploadField
+              name="faviconPath"
+              label="Ícone da aba do navegador"
+              value={faviconPath}
+              onChange={setFaviconPath}
+              errors={fieldErrors}
+              helper="Use uma imagem quadrada em PNG, WebP ou JPEG. O upload começa ao selecionar o arquivo."
+              uploadLabel="Selecionar ícone"
+              altText={`Ícone ${initialValues.companyName}`}
+            />
+          </div>
         </div>
       </section>
 

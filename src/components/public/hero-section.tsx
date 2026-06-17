@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { ButtonLink } from "@/components/ui/button-link";
 import { SectionContainer } from "@/components/ui/section-container";
 import type { PublicLandingContent } from "@/lib/landing/content";
@@ -41,14 +43,30 @@ export function HeroSection({ content }: HeroSectionProps) {
               </div>
               <span className="rounded-full bg-[var(--brand-soft)] px-3 py-1 text-sm font-semibold text-white">Online</span>
             </div>
-            <div className="mt-5 grid gap-3">
-              {hero.metrics.map((metric) => (
-                <div key={metric.value} className="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
-                  <p className="text-2xl font-black text-[var(--brand-accent-on-dark)]">{metric.value}</p>
-                  <p className="mt-1 text-sm text-slate-300">{metric.label}</p>
+            {content.logoPath ? (
+              <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.06] p-5">
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">Logo da marca</p>
+                <div className="relative mt-4 flex min-h-44 items-center justify-center overflow-hidden rounded-2xl bg-white p-6">
+                  <Image
+                    src={content.logoPath}
+                    alt={`Logo ${content.company}`}
+                    fill
+                    sizes="(min-width: 1024px) 28rem, 80vw"
+                    className="object-contain p-6"
+                    priority
+                  />
                 </div>
-              ))}
-            </div>
+              </div>
+            ) : (
+              <div className="mt-5 grid gap-3">
+                {hero.metrics.map((metric) => (
+                  <div key={metric.value} className="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+                    <p className="text-2xl font-black text-[var(--brand-accent-on-dark)]">{metric.value}</p>
+                    <p className="mt-1 text-sm text-slate-300">{metric.label}</p>
+                  </div>
+                ))}
+              </div>
+            )}
             <div className="mt-5 rounded-2xl bg-[var(--brand-color)] p-4 text-[var(--brand-contrast)]">
               <p className="text-sm font-semibold uppercase tracking-[0.2em]">Resumo visual</p>
               <p className="mt-2 text-3xl font-black">12 leads</p>

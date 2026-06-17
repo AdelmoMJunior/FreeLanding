@@ -2,6 +2,7 @@ import "server-only";
 
 import { ensureEditableLandingPage, getEditableLandingPage } from "@/lib/landing/admin-page";
 import type { AdminModule } from "@/lib/landing/module-types";
+import { deleteLandingImageByPublicUrl } from "@/lib/storage/images";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { ModuleFormValues, ModuleMoveDirection } from "@/lib/validations/module";
 
@@ -75,6 +76,15 @@ export async function saveModule(values: ModuleFormValues) {
     is_active: values.isActive,
   };
 
+  const { data: currentModule } = values.id
+    ? await supabase
+        .from("system_modules")
+        .select("image_path")
+        .eq("id", values.id)
+        .eq("landing_page_id", pageId)
+        .maybeSingle()
+    : { data: null };
+
   const { error } = values.id
     ? await supabase
         .from("system_modules")
@@ -86,6 +96,10 @@ export async function saveModule(values: ModuleFormValues) {
   if (error) {
     throw new Error("Não foi possível salvar o módulo.");
   }
+
+  if (currentModule?.image_path && currentModule.image_path !== payload.image_path) {
+    await deleteLandingImageByPublicUrl(currentModule.image_path);
+  }
 }
 
 export async function deleteModule(id: string) {
@@ -95,6 +109,13 @@ export async function deleteModule(id: string) {
     throw new Error("Não foi possível localizar a landing principal.");
   }
 
+  const { data: module } = await supabase
+    .from("system_modules")
+    .select("image_path")
+    .eq("id", id)
+    .eq("landing_page_id", pageId)
+    .maybeSingle();
+
   const { error } = await supabase
     .from("system_modules")
     .delete()
@@ -103,6 +124,10 @@ export async function deleteModule(id: string) {
 
   if (error) {
     throw new Error("Não foi possível remover o módulo.");
+  }
+
+  if (module?.image_path) {
+    await deleteLandingImageByPublicUrl(module.image_path);
   }
 }
 

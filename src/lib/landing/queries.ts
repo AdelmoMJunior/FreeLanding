@@ -9,7 +9,7 @@ import type { Database } from "@/types/database";
 
 const landingPageColumns = "id, seo_title, seo_description, seo_image_path";
 const landingSettingsColumns =
-  "headline, subheadline, primary_cta_label, primary_cta_url, secondary_cta_label, secondary_cta_url, cta_title, cta_description, whatsapp_number, whatsapp_message, contact_email, contact_phone, brand_color, notify_leads_by_email, lead_notification_email";
+  "headline, subheadline, primary_cta_label, primary_cta_url, secondary_cta_label, secondary_cta_url, cta_title, cta_description, whatsapp_number, whatsapp_message, contact_email, contact_phone, brand_color, notify_leads_by_email, lead_notification_email, company_name, logo_path, favicon_path";
 const landingModuleColumns =
   "title, description, image_path, image_alt, sort_order, is_active";
 const landingBenefitColumns = "title, description, icon_name, sort_order, is_active";

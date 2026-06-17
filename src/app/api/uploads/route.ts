@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { resolveAdminAccess } from "@/lib/auth/access";
 import { isContentLengthWithinLimit } from "@/lib/http/content-length";
 import { isSameOriginRequest } from "@/lib/security/same-origin";
-import { uploadLandingImage } from "@/lib/storage/images";
+import { deleteLandingImageByPublicUrl, uploadLandingImage } from "@/lib/storage/images";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
   ImageUploadValidationError,
@@ -96,4 +96,36 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
+}
+
+export async function DELETE(request: Request) {
+  if (!isSameOriginRequest(request.headers)) {
+    return NextResponse.json({ error: "Requisição inválida." }, { status: 403 });
+  }
+
+  const { user, status } = await getUploadAdminUser();
+
+  if (!user) {
+    return NextResponse.json(
+      { error: status === 401 ? "Faça login para remover imagens." : "Sem permissão para remover imagens." },
+      { status },
+    );
+  }
+
+  let imagePath = "";
+
+  try {
+    const payload = (await request.json()) as { imagePath?: unknown };
+    imagePath = typeof payload.imagePath === "string" ? payload.imagePath : "";
+  } catch {
+    return NextResponse.json({ error: "Não foi possível ler a imagem informada." }, { status: 400 });
+  }
+
+  if (!imagePath) {
+    return NextResponse.json({ error: "Informe a imagem que deseja remover." }, { status: 400 });
+  }
+
+  await deleteLandingImageByPublicUrl(imagePath);
+
+  return NextResponse.json({ status: "success" });
 }

@@ -99,6 +99,9 @@ export type Database = {
           brand_color: string;
           notify_leads_by_email: boolean;
           lead_notification_email: string;
+          company_name: string;
+          logo_path: string | null;
+          favicon_path: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -119,6 +122,9 @@ export type Database = {
           brand_color?: string;
           notify_leads_by_email?: boolean;
           lead_notification_email?: string;
+          company_name?: string;
+          logo_path?: string | null;
+          favicon_path?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -139,6 +145,9 @@ export type Database = {
           brand_color?: string;
           notify_leads_by_email?: boolean;
           lead_notification_email?: string;
+          company_name?: string;
+          logo_path?: string | null;
+          favicon_path?: string | null;
           created_at?: string;
           updated_at?: string;
         };

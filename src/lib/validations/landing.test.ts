@@ -24,6 +24,9 @@ const validValues = {
   brandColor: " #10B981 ",
   notifyLeadsByEmail: "on",
   leadNotificationEmail: " LEADS@Example.COM ",
+  companyName: " Minha Marca ",
+  logoPath: " /logo.png ",
+  faviconPath: " /favicon.png ",
 };
 
 function formData(values: Record<string, string>) {
@@ -70,6 +73,9 @@ describe("parseLandingSettingsForm", () => {
       brandColor: "#10b981",
       notifyLeadsByEmail: true,
       leadNotificationEmail: "leads@example.com",
+      companyName: "Minha Marca",
+      logoPath: "/logo.png",
+      faviconPath: "/favicon.png",
     });
   });
 
@@ -115,6 +121,20 @@ describe("parseLandingSettingsForm", () => {
       },
       {
         brandColor: "Informe uma cor hexadecimal válida, por exemplo #10b981.",
+      },
+    );
+  });
+
+  it("rejects unsafe brand asset paths", () => {
+    expectLandingFieldErrors(
+      {
+        ...validValues,
+        logoPath: "https://cdn.example.com/logo.png",
+        faviconPath: "javascript:alert(1)",
+      },
+      {
+        logoPath: "Use uma imagem enviada pelo painel ou um caminho começando com /.",
+        faviconPath: "Use uma imagem enviada pelo painel ou um caminho começando com /.",
       },
     );
   });

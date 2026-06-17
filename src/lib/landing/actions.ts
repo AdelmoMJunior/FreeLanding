@@ -45,10 +45,15 @@ export async function saveLandingSettingsAction(
 
   try {
     await saveLandingSettings(values);
-  } catch {
+  } catch (error) {
+    console.error("Landing settings save failed.", error);
+
     return {
       status: "error",
-      message: "Não foi possível salvar agora. Confira a conexão com o Supabase e tente novamente.",
+      message:
+        error instanceof Error && error.message.startsWith("A migration de marca")
+          ? error.message
+          : "Não foi possível salvar agora. Confira a conexão com o Supabase e tente novamente.",
     };
   }
 

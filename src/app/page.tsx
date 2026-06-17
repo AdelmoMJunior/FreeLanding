@@ -30,10 +30,12 @@ function getSafeMetadataImage(imagePath: string | null) {
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getPublicLandingContent();
   const image = getSafeMetadataImage(content.seo.imagePath);
+  const icon = getSafeMetadataImage(content.faviconPath);
 
   return {
     title: content.seo.title,
     description: content.seo.description,
+    ...(icon ? { icons: { icon } } : {}),
     openGraph: {
       title: content.seo.title,
       description: content.seo.description,

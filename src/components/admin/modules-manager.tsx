@@ -123,26 +123,32 @@ type UploadResponse = Readonly<{
   error?: unknown;
 }>;
 
+async function deleteUploadedImage(imagePath: string) {
+  if (!imagePath) {
+    return;
+  }
+
+  await fetch("/api/uploads", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ imagePath }),
+  }).catch(() => undefined);
+}
+
 function ModuleForm({ module, nextSortOrder = 0, legend, submitLabel }: ModuleFormProps) {
   const [state, formAction, isPending] = useActionState(saveModuleAction, initialActionState);
   const [imagePath, setImagePath] = useState(module?.imagePath ?? "");
   const [imageAlt, setImageAlt] = useState(module?.imageAlt ?? "");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadMessage, setUploadMessage] = useState<UploadMessage>({ status: "idle", text: "" });
   const formId = module ? `module-${module.id}` : "module-new";
   const fieldErrors = state.fieldErrors;
   const uploadStatusId = `${formId}-image-upload-status`;
 
-  async function handleImageUpload() {
-    if (!selectedFile) {
-      setUploadMessage({ status: "error", text: "Selecione uma imagem antes de enviar." });
-      return;
-    }
-
+  async function handleImageUpload(file: File) {
     setUploadMessage({ status: "uploading", text: "Enviando imagem..." });
 
     const uploadFormData = new FormData();
-    uploadFormData.append("file", selectedFile);
+    uploadFormData.append("file", file);
     uploadFormData.append("altText", imageAlt.trim());
 
     try {
@@ -163,10 +169,11 @@ function ModuleForm({ module, nextSortOrder = 0, legend, submitLabel }: ModuleFo
         return;
       }
 
+      await deleteUploadedImage(imagePath);
       setImagePath(payload.imagePath);
       setUploadMessage({
         status: "success",
-        text: "Imagem enviada. O caminho foi preenchido automaticamente; salve o módulo para publicar a alteração.",
+        text: "Imagem enviada. Salve o módulo para publicar a alteração.",
       });
     } catch {
       setUploadMessage({ status: "error", text: "Falha de conexão ao enviar a imagem. Tente novamente." });
@@ -244,10 +251,10 @@ function ModuleForm({ module, nextSortOrder = 0, legend, submitLabel }: ModuleFo
           </div>
           <div className="md:col-span-2 rounded-2xl border border-slate-200 bg-slate-50 p-4">
             <label htmlFor={`${formId}-image-upload`} className="block text-sm font-black text-slate-900">
-              Enviar imagem do módulo
+              Imagem do módulo
             </label>
             <p id={`${formId}-image-upload-helper`} className="mt-2 text-xs leading-5 text-slate-500">
-              Formatos aceitos: JPEG, PNG ou WebP até 5 MB. Após o envio, confira o caminho e salve o módulo.
+              Formatos aceitos: JPEG, PNG ou WebP até 5 MB. O upload começa ao selecionar o arquivo.
             </p>
             <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
               <input
@@ -255,20 +262,34 @@ function ModuleForm({ module, nextSortOrder = 0, legend, submitLabel }: ModuleFo
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
                 onChange={(event) => {
-                  setSelectedFile(event.target.files?.[0] ?? null);
-                  setUploadMessage({ status: "idle", text: "" });
+                  const file = event.target.files?.[0];
+                  event.target.value = "";
+
+                  if (file) {
+                    void handleImageUpload(file);
+                  }
                 }}
+                disabled={uploadMessage.status === "uploading"}
                 aria-describedby={`${formId}-image-upload-helper ${uploadStatusId}`}
                 className="block w-full text-sm font-semibold text-slate-700 file:mr-4 file:min-h-10 file:rounded-full file:border-0 file:bg-white file:px-4 file:text-xs file:font-black file:uppercase file:tracking-[0.14em] file:text-slate-700 file:shadow-sm hover:file:bg-slate-100 sm:max-w-md"
               />
-              <button
-                type="button"
-                onClick={handleImageUpload}
-                disabled={!selectedFile || uploadMessage.status === "uploading"}
-                className={secondaryButtonClassName}
-              >
-                {uploadMessage.status === "uploading" ? "Enviando..." : "Enviar imagem"}
-              </button>
+              {uploadMessage.status === "uploading" ? (
+                <span className="inline-flex min-h-10 items-center rounded-full bg-emerald-50 px-4 text-xs font-black uppercase tracking-[0.14em] text-emerald-800">
+                  Enviando...
+                </span>
+              ) : null}
+              {imagePath ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    void deleteUploadedImage(imagePath);
+                    setImagePath("");
+                  }}
+                  className="inline-flex min-h-10 items-center justify-center rounded-full border border-red-200 bg-red-50 px-4 text-xs font-black uppercase tracking-[0.14em] text-red-700 transition hover:border-red-300 hover:bg-red-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-red-600"
+                >
+                  Remover imagem
+                </button>
+              ) : null}
             </div>
             <p
               id={uploadStatusId}

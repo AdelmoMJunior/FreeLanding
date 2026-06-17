@@ -8,6 +8,7 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { ParsedImageUpload } from "@/lib/validations/upload";
 
 export const LANDING_IMAGE_BUCKET = "landing-images";
+const landingImagesPublicPath = `/storage/v1/object/public/${LANDING_IMAGE_BUCKET}/`;
 
 type UploadLandingImageInput = ParsedImageUpload &
   Readonly<{
@@ -69,4 +70,78 @@ export async function uploadLandingImage({
     path,
     publicUrl: data.publicUrl,
   };
+}
+
+type SupabaseAdminClient = ReturnType<typeof createSupabaseAdminClient>;
+
+function getConfiguredSupabaseUrl() {
+  const value = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
+
+  if (!value) {
+    return null;
+  }
+
+  try {
+    const url = new URL(value);
+
+    return url.protocol === "http:" || url.protocol === "https:" ? url : null;
+  } catch {
+    return null;
+  }
+}
+
+function getStoragePathFromPublicUrl(value: string | null | undefined) {
+  const trimmed = value?.trim();
+  const supabaseUrl = getConfiguredSupabaseUrl();
+
+  if (!trimmed || !supabaseUrl) {
+    return null;
+  }
+
+  try {
+    const url = new URL(trimmed);
+
+    if (
+      url.protocol !== supabaseUrl.protocol ||
+      url.hostname !== supabaseUrl.hostname ||
+      url.port !== supabaseUrl.port ||
+      url.username !== "" ||
+      url.password !== "" ||
+      !url.pathname.startsWith(landingImagesPublicPath)
+    ) {
+      return null;
+    }
+
+    return decodeURIComponent(url.pathname.slice(landingImagesPublicPath.length));
+  } catch {
+    return null;
+  }
+}
+
+async function hasLandingImageReference(supabase: SupabaseAdminClient, value: string) {
+  const [logoResult, faviconResult, moduleResult] = await Promise.all([
+    supabase.from("landing_settings").select("landing_page_id").eq("logo_path", value).limit(1),
+    supabase.from("landing_settings").select("landing_page_id").eq("favicon_path", value).limit(1),
+    supabase.from("system_modules").select("id").eq("image_path", value).limit(1),
+  ]);
+
+  return Boolean(logoResult.data?.length || faviconResult.data?.length || moduleResult.data?.length);
+}
+
+export async function deleteLandingImageByPublicUrl(value: string | null | undefined) {
+  const trimmed = value?.trim() ?? "";
+  const path = getStoragePathFromPublicUrl(value);
+
+  if (!path || path.includes("..") || path.includes("\\")) {
+    return;
+  }
+
+  const supabase = createSupabaseAdminClient();
+
+  if (await hasLandingImageReference(supabase, trimmed)) {
+    return;
+  }
+
+  await supabase.storage.from(LANDING_IMAGE_BUCKET).remove([path]);
+  await supabase.from("media_assets").delete().eq("bucket", LANDING_IMAGE_BUCKET).eq("path", path);
 }
