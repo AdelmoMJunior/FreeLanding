@@ -9,11 +9,11 @@ type ButtonLinkProps = Readonly<
 
 const variants = {
   primary:
-    "bg-emerald-500 text-slate-950 shadow-[0_16px_36px_rgba(16,185,129,0.32)] hover:bg-emerald-400 focus-visible:outline-emerald-200",
+    "bg-[var(--brand-color)] text-[var(--brand-contrast)] shadow-[0_16px_36px_var(--brand-shadow)] hover:brightness-110 focus-visible:outline-[var(--brand-color)]",
   secondary:
     "border border-white/15 bg-white/10 text-white hover:bg-white/15 focus-visible:outline-white",
   ghost:
-    "border border-slate-200 bg-white text-slate-900 shadow-sm hover:border-emerald-300 hover:text-emerald-800 focus-visible:outline-emerald-600",
+    "border border-slate-200 bg-white text-slate-900 shadow-sm hover:border-[var(--brand-color)] hover:text-slate-950 focus-visible:outline-[var(--brand-color)]",
 };
 
 export function ButtonLink({

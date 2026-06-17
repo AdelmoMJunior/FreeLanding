@@ -1,68 +1,68 @@
 export const landingContent = {
-  company: "FreeLanding Automação",
-  eyebrow: "Automação comercial para operação real",
+  company: "FreeLanding",
+  eyebrow: "",
   hero: {
-    title: "Controle vendas, estoque e atendimento sem perder tempo no balcão.",
+    title: "Apresente sua oferta com clareza e gere contatos qualificados.",
     description:
-      "Uma landing demonstrativa para um sistema de automação comercial pensado para lojas, distribuidores e serviços que precisam vender com agilidade, acompanhar o caixa e enxergar a rotina sem planilhas soltas.",
-    primaryAction: "Conhecer módulos",
+      "Mostre o que sua empresa entrega, organize as informações mais importantes e facilite o primeiro contato com clientes interessados.",
+    primaryAction: "Ver destaques",
     secondaryAction: "Ver benefícios",
-    proof: "Demonstração visual para apresentar a proposta antes de uma conversa comercial.",
+    proof: "Página preparada para ser adaptada à sua marca, oferta e canais de atendimento.",
     metrics: [
-      { value: "PDV", label: "venda rápida no caixa" },
-      { value: "NF-e", label: "rotina fiscal organizada" },
-      { value: "Estoque", label: "entrada, saída e alerta" },
+      { value: "Oferta", label: "mensagem central clara" },
+      { value: "Conteúdo", label: "seções organizadas" },
+      { value: "Leads", label: "contatos em um só lugar" },
     ],
   },
   modules: [
     {
-      title: "Frente de caixa",
+      title: "Destaques da oferta",
       description:
-        "Tela objetiva para registrar vendas, aplicar desconto autorizado, selecionar forma de pagamento e fechar o atendimento sem passos desnecessários.",
+        "Apresente os pontos mais importantes do serviço, produto ou solução para que o visitante entenda rapidamente se faz sentido conversar.",
     },
     {
-      title: "Estoque acompanhado",
+      title: "Benefícios objetivos",
       description:
-        "Movimentações de entrada e saída, cadastro de produtos e avisos para itens que precisam de compra antes de faltar na prateleira.",
+        "Mostre ganhos práticos em linguagem simples, sem depender de apresentação longa antes do primeiro contato.",
     },
     {
-      title: "Financeiro do dia",
+      title: "Provas e diferenciais",
       description:
-        "Resumo de recebimentos, contas e fechamento de caixa para saber o que entrou, o que saiu e o que ficou pendente.",
+        "Organize argumentos, imagens e exemplos que ajudam o cliente a confiar na proposta antes de enviar os dados.",
     },
     {
-      title: "Emissão fiscal",
+      title: "Contato facilitado",
       description:
-        "Espaço previsto para rotinas de NF-e, NFC-e e documentos necessários conforme o perfil da empresa e as regras fiscais aplicáveis.",
+        "Direcione o visitante para formulário, WhatsApp ou outro canal configurado para transformar interesse em conversa comercial.",
     },
   ],
   benefits: [
-    "Menos retrabalho entre balcão, estoque e financeiro.",
-    "Informações importantes reunidas em uma rotina fácil de consultar.",
-    "Atendimento mais previsível nos horários de maior movimento.",
-    "Base preparada para crescer com integrações conforme a operação amadurece.",
+    "Mensagem principal mais clara para quem chega pela primeira vez.",
+    "Informações importantes reunidas em uma página fácil de navegar.",
+    "Contato direto com pessoas realmente interessadas na oferta.",
+    "Visual alinhado à marca, com textos e seções editáveis pelo painel.",
   ],
   faq: [
     {
-      question: "O sistema atende lojas com venda no balcão?",
+      question: "Posso adaptar os textos para qualquer tipo de negócio?",
       answer:
-        "Sim. A proposta é apoiar negócios que precisam registrar vendas com rapidez, acompanhar estoque e manter o caixa organizado durante o expediente.",
+        "Sim. Os principais textos, chamadas, módulos, benefícios, perguntas e canais de contato podem ser ajustados pelo painel administrativo.",
     },
     {
-      question: "Quais rotinas aparecem primeiro na apresentação?",
+      question: "A página pode receber contatos de clientes?",
       answer:
-        "A página destaca frente de caixa, estoque, financeiro do dia e emissão fiscal, que costumam ser os pontos mais sensíveis da operação comercial.",
+        "Pode. O formulário registra os leads no painel e, quando configurado, também envia uma notificação por e-mail para a equipe.",
     },
     {
-      question: "Como funciona o contato inicial?",
+      question: "Consigo usar a identidade visual da minha marca?",
       answer:
-        "A landing direciona a conversa para WhatsApp e orçamento. O atendimento real será configurado com o número oficial da empresa.",
+        "Sim. A cor principal da landing pode ser configurada no painel para deixar os botões e destaques mais próximos da marca.",
     },
   ],
   cta: {
-    title: "Mostre o sistema com clareza antes da primeira reunião.",
+    title: "Vamos conversar sobre sua necessidade?",
     description:
-      "A página organiza módulos, benefícios e perguntas frequentes para facilitar a conversa com quem procura automação comercial sem perder tempo com apresentação improvisada.",
-    action: "Rever módulos",
+      "Envie seus dados e conte rapidamente o que procura. A equipe retorna com próximos passos e informações para ajudar na decisão.",
+    action: "Ver destaques",
   },
 } as const;

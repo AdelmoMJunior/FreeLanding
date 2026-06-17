@@ -1,13 +1,12 @@
 import type { ReactNode } from "react";
 
+import { AdminNavigation } from "@/components/admin/admin-navigation";
 import { logoutAdmin } from "@/lib/auth/actions";
 
 type AdminShellProps = Readonly<{
   adminEmail?: string | null;
   children: ReactNode;
 }>;
-
-const navigationItems = ["Configurações", "Módulos", "Benefícios", "FAQ", "Leads"];
 
 export function AdminShell({ adminEmail, children }: AdminShellProps) {
   const displayEmail = adminEmail ?? "Administrador";
@@ -55,24 +54,7 @@ export function AdminShell({ adminEmail, children }: AdminShellProps) {
 
       <div className="mx-auto grid w-full max-w-7xl gap-6 px-5 py-6 sm:px-8 lg:grid-cols-[280px_1fr] lg:px-10 lg:py-10">
         <aside className="rounded-[2rem] border border-white bg-white/75 p-3 shadow-[0_24px_70px_rgba(15,23,42,0.08)] lg:sticky lg:top-6 lg:self-start">
-          <nav aria-label="Navegação administrativa">
-            <ul className="grid gap-2">
-              {navigationItems.map((item, index) => (
-                <li key={item}>
-                  <span
-                    className={`flex items-center justify-between rounded-2xl px-4 py-3 text-sm font-bold ${
-                      index === 0
-                        ? "bg-slate-950 text-white shadow-[0_14px_30px_rgba(15,23,42,0.18)]"
-                        : "bg-slate-50 text-slate-600"
-                    }`}
-                  >
-                    {item}
-                    <span className="text-xs font-semibold opacity-70">em breve</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <AdminNavigation />
         </aside>
 
         <main className="min-w-0">{children}</main>
