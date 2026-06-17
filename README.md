@@ -113,6 +113,8 @@ docker run --rm -p 3000:3000 --env-file .env.local freelanding
 
 Coolify Docker Compose service file is available at `docker-compose.yml`. It uses the public GitHub repository as the remote Docker build context, so you can paste the compose file in Coolify/Docker and it will fetch the source from GitHub. Set the same variables in the environment/secrets screen; do not commit real values.
 
+If Coolify asks for an image name while configuring the domain, use the service image from the compose file: `freelanding:latest`. Keep `pull_policy: build` in place so Compose builds the image from the GitHub context instead of using Docker Hub.
+
 ## Environment Variables
 
 The placeholders in `.env.example` configure the current Supabase, analytics, and server-side features. Do not commit real values.
