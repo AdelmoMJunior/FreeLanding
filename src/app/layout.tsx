@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "FreeLanding",
-  description: "Plataforma para criar e editar landing pages profissionais.",
+  title: "Sua Empresa",
+  description: "Conheça a solução, tire dúvidas e fale com a equipe.",
 };
 
 type RootLayoutProps = Readonly<{

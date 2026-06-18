@@ -27,6 +27,21 @@ const validValues = {
   companyName: " Minha Marca ",
   logoPath: " /logo.png ",
   faviconPath: " /favicon.png ",
+  leadFormTitle: " Fale com a equipe ",
+  leadFormDescription: " Envie seus dados para receber um retorno objetivo. ",
+  leadFormSubmitLabel: " Enviar contato ",
+  leadFormSuccessTitle: " Mensagem enviada ",
+  leadFormSuccessMessage: " Recebemos seus dados e entraremos em contato. ",
+  leadFormSuccessDismissLabel: " OK ",
+  leadFormRequiredLabel: " obrigatório ",
+  leadFormNameLabel: " Nome ",
+  leadFormEmailLabel: " E-mail ",
+  leadFormPhoneLabel: " WhatsApp ",
+  leadFormPhoneHelper: " Opcional para retorno rápido. ",
+  leadFormCompanyLabel: " Empresa ",
+  leadFormMessageLabel: " Mensagem ",
+  leadFormMessageHelper: " Opcional para adiantar o assunto. ",
+  leadFormMessagePlaceholder: " Conte rapidamente o que procura. ",
 };
 
 function formData(values: Record<string, string>) {
@@ -76,6 +91,21 @@ describe("parseLandingSettingsForm", () => {
       companyName: "Minha Marca",
       logoPath: "/logo.png",
       faviconPath: "/favicon.png",
+      leadFormTitle: "Fale com a equipe",
+      leadFormDescription: "Envie seus dados para receber um retorno objetivo.",
+      leadFormSubmitLabel: "Enviar contato",
+      leadFormSuccessTitle: "Mensagem enviada",
+      leadFormSuccessMessage: "Recebemos seus dados e entraremos em contato.",
+      leadFormSuccessDismissLabel: "OK",
+      leadFormRequiredLabel: "obrigatório",
+      leadFormNameLabel: "Nome",
+      leadFormEmailLabel: "E-mail",
+      leadFormPhoneLabel: "WhatsApp",
+      leadFormPhoneHelper: "Opcional para retorno rápido.",
+      leadFormCompanyLabel: "Empresa",
+      leadFormMessageLabel: "Mensagem",
+      leadFormMessageHelper: "Opcional para adiantar o assunto.",
+      leadFormMessagePlaceholder: "Conte rapidamente o que procura.",
     });
   });
 
@@ -98,6 +128,25 @@ describe("parseLandingSettingsForm", () => {
     expect(parsed.contactPhone).toBe("");
     expect(parsed.notifyLeadsByEmail).toBe(false);
     expect(parsed.leadNotificationEmail).toBe("");
+  });
+
+  it("accepts empty optional form helper texts", () => {
+    const parsed = parseLandingSettingsForm(
+      formData({
+        ...validValues,
+        leadFormSuccessTitle: " ",
+        leadFormRequiredLabel: " ",
+        leadFormPhoneHelper: " ",
+        leadFormMessageHelper: " ",
+        leadFormMessagePlaceholder: " ",
+      }),
+    );
+
+    expect(parsed.leadFormSuccessTitle).toBe("");
+    expect(parsed.leadFormRequiredLabel).toBe("");
+    expect(parsed.leadFormPhoneHelper).toBe("");
+    expect(parsed.leadFormMessageHelper).toBe("");
+    expect(parsed.leadFormMessagePlaceholder).toBe("");
   });
 
   it("requires a notification email only when lead email notifications are enabled", () => {

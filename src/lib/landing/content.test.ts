@@ -34,6 +34,21 @@ describe("buildLandingContent", () => {
         company_name: "Minha Marca",
         logo_path: "/logo.png",
         favicon_path: "/favicon.png",
+        lead_form_title: "Solicite uma conversa",
+        lead_form_description: "Preencha o formulário para receber atendimento.",
+        lead_form_submit_label: "Solicitar retorno",
+        lead_form_success_title: "Solicitação enviada",
+        lead_form_success_message: "A equipe recebeu seus dados.",
+        lead_form_success_dismiss_label: "Fechar",
+        lead_form_required_label: "necessário",
+        lead_form_name_label: "Seu nome",
+        lead_form_email_label: "Seu e-mail",
+        lead_form_phone_label: "Seu WhatsApp",
+        lead_form_phone_helper: "Informe se quiser retorno por telefone.",
+        lead_form_company_label: "Organização",
+        lead_form_message_label: "Conte o que procura",
+        lead_form_message_helper: "Esse campo ajuda a preparar o atendimento.",
+        lead_form_message_placeholder: "Descreva rapidamente sua necessidade.",
       },
     });
 
@@ -55,6 +70,23 @@ describe("buildLandingContent", () => {
     expect(content.company).toBe("Minha Marca");
     expect(content.logoPath).toBe("/logo.png");
     expect(content.faviconPath).toBe("/favicon.png");
+    expect(content.leadForm).toEqual({
+      title: "Solicite uma conversa",
+      description: "Preencha o formulário para receber atendimento.",
+      submitLabel: "Solicitar retorno",
+      successTitle: "Solicitação enviada",
+      successMessage: "A equipe recebeu seus dados.",
+      successDismissLabel: "Fechar",
+      requiredLabel: "necessário",
+      nameLabel: "Seu nome",
+      emailLabel: "Seu e-mail",
+      phoneLabel: "Seu WhatsApp",
+      phoneHelper: "Informe se quiser retorno por telefone.",
+      companyLabel: "Organização",
+      messageLabel: "Conte o que procura",
+      messageHelper: "Esse campo ajuda a preparar o atendimento.",
+      messagePlaceholder: "Descreva rapidamente sua necessidade.",
+    });
     expect(content.whatsapp).toEqual({
       href: "https://wa.me/5511988887777?text=Ol%C3%A1%2C%20quero%20saber%20mais%20sobre%20a%20oferta.",
       label: "Abrir conversa no WhatsApp",
@@ -99,6 +131,7 @@ describe("buildLandingContent", () => {
       benefits: content.benefits,
       faq: content.faq,
       cta: content.cta,
+      leadForm: content.leadForm,
       seo: content.seo,
     }).toLowerCase();
 
@@ -258,7 +291,7 @@ describe("buildLandingContent", () => {
     ]);
   });
 
-  it("keeps static modules when database modules are empty", () => {
+  it("does not show fallback modules when database modules are empty", () => {
     const content = buildLandingContent({
       modules: [
         {
@@ -272,7 +305,7 @@ describe("buildLandingContent", () => {
       ],
     });
 
-    expect(content.modules[0]?.title).toBe("Soluções para sua necessidade");
+    expect(content.modules).toEqual([]);
   });
 
   it("uses only active database benefits ordered by sort order", () => {
@@ -316,7 +349,7 @@ describe("buildLandingContent", () => {
     ]);
   });
 
-  it("keeps static benefits when database benefits are empty", () => {
+  it("does not show fallback benefits when database benefits are empty", () => {
     const content = buildLandingContent({
       benefits: [
         {
@@ -329,7 +362,7 @@ describe("buildLandingContent", () => {
       ],
     });
 
-    expect(content.benefits[0]?.title).toBe("Entenda rapidamente se a solução faz sentido para a sua necessidade.");
+    expect(content.benefits).toEqual([]);
   });
 
   it("uses only active database FAQs ordered by sort order", () => {
@@ -368,7 +401,7 @@ describe("buildLandingContent", () => {
     ]);
   });
 
-  it("keeps static FAQs when database FAQs are empty", () => {
+  it("does not show fallback FAQs when database FAQs are empty", () => {
     const content = buildLandingContent({
       faqs: [
         {
@@ -380,6 +413,6 @@ describe("buildLandingContent", () => {
       ],
     });
 
-    expect(content.faq[0]?.question).toBe("Como faço para receber atendimento?");
+    expect(content.faq).toEqual([]);
   });
 });

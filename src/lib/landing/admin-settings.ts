@@ -30,6 +30,21 @@ type EditableLandingSettings = Readonly<{
   company_name: string;
   logo_path: string | null;
   favicon_path: string | null;
+  lead_form_title: string;
+  lead_form_description: string;
+  lead_form_submit_label: string;
+  lead_form_success_title: string;
+  lead_form_success_message: string;
+  lead_form_success_dismiss_label: string;
+  lead_form_required_label: string;
+  lead_form_name_label: string;
+  lead_form_email_label: string;
+  lead_form_phone_label: string;
+  lead_form_phone_helper: string;
+  lead_form_company_label: string;
+  lead_form_message_label: string;
+  lead_form_message_helper: string;
+  lead_form_message_placeholder: string;
 }>;
 
 export const defaultLandingSettingsFormValues: LandingSettingsFormValues = {
@@ -53,12 +68,35 @@ export const defaultLandingSettingsFormValues: LandingSettingsFormValues = {
   companyName: landingContent.company,
   logoPath: "",
   faviconPath: "",
+  leadFormTitle: landingContent.leadForm.title,
+  leadFormDescription: landingContent.leadForm.description,
+  leadFormSubmitLabel: landingContent.leadForm.submitLabel,
+  leadFormSuccessTitle: landingContent.leadForm.successTitle,
+  leadFormSuccessMessage: landingContent.leadForm.successMessage,
+  leadFormSuccessDismissLabel: landingContent.leadForm.successDismissLabel,
+  leadFormRequiredLabel: landingContent.leadForm.requiredLabel,
+  leadFormNameLabel: landingContent.leadForm.nameLabel,
+  leadFormEmailLabel: landingContent.leadForm.emailLabel,
+  leadFormPhoneLabel: landingContent.leadForm.phoneLabel,
+  leadFormPhoneHelper: landingContent.leadForm.phoneHelper,
+  leadFormCompanyLabel: landingContent.leadForm.companyLabel,
+  leadFormMessageLabel: landingContent.leadForm.messageLabel,
+  leadFormMessageHelper: landingContent.leadForm.messageHelper,
+  leadFormMessagePlaceholder: landingContent.leadForm.messagePlaceholder,
 };
 
 function textOrFallback(value: string | null | undefined, fallback: string) {
   const trimmed = value?.trim();
 
   return trimmed ? trimmed : fallback;
+}
+
+function optionalTextOrFallback(value: string | null | undefined, fallback: string) {
+  if (value == null) {
+    return fallback;
+  }
+
+  return value.trim();
 }
 
 function isMissingLandingSettingsColumnError(error: { message?: string } | null | undefined) {
@@ -73,6 +111,7 @@ function isMissingLandingSettingsColumnError(error: { message?: string } | null 
     "brand_color",
     "notify_leads_by_email",
     "lead_notification_email",
+    "lead_form_",
   ].some((column) => message.includes(column));
 }
 
@@ -131,6 +170,21 @@ function toFormValues(
     companyName: textOrFallback(settings?.company_name, defaultLandingSettingsFormValues.companyName),
     logoPath: textOrFallback(settings?.logo_path, ""),
     faviconPath: textOrFallback(settings?.favicon_path, ""),
+    leadFormTitle: textOrFallback(settings?.lead_form_title, defaultLandingSettingsFormValues.leadFormTitle),
+    leadFormDescription: textOrFallback(settings?.lead_form_description, defaultLandingSettingsFormValues.leadFormDescription),
+    leadFormSubmitLabel: textOrFallback(settings?.lead_form_submit_label, defaultLandingSettingsFormValues.leadFormSubmitLabel),
+    leadFormSuccessTitle: optionalTextOrFallback(settings?.lead_form_success_title, defaultLandingSettingsFormValues.leadFormSuccessTitle),
+    leadFormSuccessMessage: textOrFallback(settings?.lead_form_success_message, defaultLandingSettingsFormValues.leadFormSuccessMessage),
+    leadFormSuccessDismissLabel: textOrFallback(settings?.lead_form_success_dismiss_label, defaultLandingSettingsFormValues.leadFormSuccessDismissLabel),
+    leadFormRequiredLabel: optionalTextOrFallback(settings?.lead_form_required_label, defaultLandingSettingsFormValues.leadFormRequiredLabel),
+    leadFormNameLabel: textOrFallback(settings?.lead_form_name_label, defaultLandingSettingsFormValues.leadFormNameLabel),
+    leadFormEmailLabel: textOrFallback(settings?.lead_form_email_label, defaultLandingSettingsFormValues.leadFormEmailLabel),
+    leadFormPhoneLabel: textOrFallback(settings?.lead_form_phone_label, defaultLandingSettingsFormValues.leadFormPhoneLabel),
+    leadFormPhoneHelper: optionalTextOrFallback(settings?.lead_form_phone_helper, defaultLandingSettingsFormValues.leadFormPhoneHelper),
+    leadFormCompanyLabel: textOrFallback(settings?.lead_form_company_label, defaultLandingSettingsFormValues.leadFormCompanyLabel),
+    leadFormMessageLabel: textOrFallback(settings?.lead_form_message_label, defaultLandingSettingsFormValues.leadFormMessageLabel),
+    leadFormMessageHelper: optionalTextOrFallback(settings?.lead_form_message_helper, defaultLandingSettingsFormValues.leadFormMessageHelper),
+    leadFormMessagePlaceholder: optionalTextOrFallback(settings?.lead_form_message_placeholder, defaultLandingSettingsFormValues.leadFormMessagePlaceholder),
   };
 }
 
@@ -145,7 +199,7 @@ export async function getLandingSettingsForAdmin() {
   const { data: settings, error: settingsError } = await supabase
     .from("landing_settings")
     .select(
-      "headline, subheadline, primary_cta_label, primary_cta_url, secondary_cta_label, secondary_cta_url, cta_title, cta_description, whatsapp_number, whatsapp_message, contact_email, contact_phone, brand_color, notify_leads_by_email, lead_notification_email, company_name, logo_path, favicon_path",
+      "headline, subheadline, primary_cta_label, primary_cta_url, secondary_cta_label, secondary_cta_url, cta_title, cta_description, whatsapp_number, whatsapp_message, contact_email, contact_phone, brand_color, notify_leads_by_email, lead_notification_email, company_name, logo_path, favicon_path, lead_form_title, lead_form_description, lead_form_submit_label, lead_form_success_title, lead_form_success_message, lead_form_success_dismiss_label, lead_form_required_label, lead_form_name_label, lead_form_email_label, lead_form_phone_label, lead_form_phone_helper, lead_form_company_label, lead_form_message_label, lead_form_message_helper, lead_form_message_placeholder",
     )
     .eq("landing_page_id", page.id)
     .maybeSingle();
@@ -199,6 +253,21 @@ export async function saveLandingSettings(values: LandingSettingsFormValues) {
       company_name: values.companyName,
       logo_path: values.logoPath || null,
       favicon_path: values.faviconPath || null,
+      lead_form_title: values.leadFormTitle,
+      lead_form_description: values.leadFormDescription,
+      lead_form_submit_label: values.leadFormSubmitLabel,
+      lead_form_success_title: values.leadFormSuccessTitle,
+      lead_form_success_message: values.leadFormSuccessMessage,
+      lead_form_success_dismiss_label: values.leadFormSuccessDismissLabel,
+      lead_form_required_label: values.leadFormRequiredLabel,
+      lead_form_name_label: values.leadFormNameLabel,
+      lead_form_email_label: values.leadFormEmailLabel,
+      lead_form_phone_label: values.leadFormPhoneLabel,
+      lead_form_phone_helper: values.leadFormPhoneHelper,
+      lead_form_company_label: values.leadFormCompanyLabel,
+      lead_form_message_label: values.leadFormMessageLabel,
+      lead_form_message_helper: values.leadFormMessageHelper,
+      lead_form_message_placeholder: values.leadFormMessagePlaceholder,
     },
     { onConflict: "landing_page_id" },
   );

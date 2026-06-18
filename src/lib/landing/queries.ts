@@ -9,7 +9,7 @@ import type { Database } from "@/types/database";
 
 const landingPageColumns = "id, seo_title, seo_description, seo_image_path";
 const landingSettingsColumns =
-  "headline, subheadline, primary_cta_label, primary_cta_url, secondary_cta_label, secondary_cta_url, cta_title, cta_description, whatsapp_number, whatsapp_message, contact_email, contact_phone, brand_color, notify_leads_by_email, lead_notification_email, company_name, logo_path, favicon_path";
+  "headline, subheadline, primary_cta_label, primary_cta_url, secondary_cta_label, secondary_cta_url, cta_title, cta_description, whatsapp_number, whatsapp_message, contact_email, contact_phone, brand_color, notify_leads_by_email, lead_notification_email, company_name, logo_path, favicon_path, lead_form_title, lead_form_description, lead_form_submit_label, lead_form_success_title, lead_form_success_message, lead_form_success_dismiss_label, lead_form_required_label, lead_form_name_label, lead_form_email_label, lead_form_phone_label, lead_form_phone_helper, lead_form_company_label, lead_form_message_label, lead_form_message_helper, lead_form_message_placeholder";
 const landingModuleColumns =
   "title, description, image_path, image_alt, sort_order, is_active";
 const landingBenefitColumns = "title, description, icon_name, sort_order, is_active";

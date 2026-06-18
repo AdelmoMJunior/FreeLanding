@@ -28,6 +28,21 @@ type LandingSettingsRecord = Readonly<{
   company_name?: string | null;
   logo_path?: string | null;
   favicon_path?: string | null;
+  lead_form_title?: string | null;
+  lead_form_description?: string | null;
+  lead_form_submit_label?: string | null;
+  lead_form_success_title?: string | null;
+  lead_form_success_message?: string | null;
+  lead_form_success_dismiss_label?: string | null;
+  lead_form_required_label?: string | null;
+  lead_form_name_label?: string | null;
+  lead_form_email_label?: string | null;
+  lead_form_phone_label?: string | null;
+  lead_form_phone_helper?: string | null;
+  lead_form_company_label?: string | null;
+  lead_form_message_label?: string | null;
+  lead_form_message_helper?: string | null;
+  lead_form_message_placeholder?: string | null;
 }>;
 
 type LandingModuleRecord = Readonly<{
@@ -78,6 +93,23 @@ export type PublicLandingContent = Readonly<{
     description: string;
     action: LandingAction;
   }>;
+  leadForm: Readonly<{
+    title: string;
+    description: string;
+    submitLabel: string;
+    successTitle: string;
+    successMessage: string;
+    successDismissLabel: string;
+    requiredLabel: string;
+    nameLabel: string;
+    emailLabel: string;
+    phoneLabel: string;
+    phoneHelper: string;
+    companyLabel: string;
+    messageLabel: string;
+    messageHelper: string;
+    messagePlaceholder: string;
+  }>;
   seo: Readonly<{
     title: string;
     description: string;
@@ -118,6 +150,14 @@ function textOrFallback(value: string | null | undefined, fallback: string) {
   return trimmed ? trimmed : fallback;
 }
 
+function optionalTextOrFallback(value: string | null | undefined, fallback: string) {
+  if (value == null) {
+    return fallback;
+  }
+
+  return value.trim();
+}
+
 function nullableText(value: string | null | undefined) {
   const trimmed = value?.trim();
 
@@ -156,8 +196,12 @@ function fallbackModules(): readonly PublicLandingModule[] {
 }
 
 function buildModules(modules?: readonly LandingModuleRecord[] | null) {
+  if (!modules) {
+    return fallbackModules();
+  }
+
   const parsedModules = modules
-    ?.filter((module) => module.is_active !== false)
+    .filter((module) => module.is_active !== false)
     .map((module) => ({
       module: {
         title: module.title.trim(),
@@ -171,7 +215,7 @@ function buildModules(modules?: readonly LandingModuleRecord[] | null) {
     .sort((a, b) => a.sortOrder - b.sortOrder)
     .map(({ module }) => module);
 
-  return parsedModules?.length ? parsedModules : fallbackModules();
+  return parsedModules;
 }
 
 function fallbackBenefits(): readonly PublicLandingBenefit[] {
@@ -183,8 +227,12 @@ function fallbackBenefits(): readonly PublicLandingBenefit[] {
 }
 
 function buildBenefits(benefits?: readonly LandingBenefitRecord[] | null) {
+  if (!benefits) {
+    return fallbackBenefits();
+  }
+
   const parsedBenefits = benefits
-    ?.filter((benefit) => benefit.is_active !== false)
+    .filter((benefit) => benefit.is_active !== false)
     .map((benefit) => ({
       benefit: {
         title: benefit.title.trim(),
@@ -197,7 +245,7 @@ function buildBenefits(benefits?: readonly LandingBenefitRecord[] | null) {
     .sort((a, b) => a.sortOrder - b.sortOrder)
     .map(({ benefit }) => benefit);
 
-  return parsedBenefits?.length ? parsedBenefits : fallbackBenefits();
+  return parsedBenefits;
 }
 
 function fallbackFaqs(): readonly PublicLandingFaq[] {
@@ -208,8 +256,12 @@ function fallbackFaqs(): readonly PublicLandingFaq[] {
 }
 
 function buildFaqs(faqs?: readonly LandingFaqRecord[] | null) {
+  if (!faqs) {
+    return fallbackFaqs();
+  }
+
   const parsedFaqs = faqs
-    ?.filter((faq) => faq.is_active !== false)
+    .filter((faq) => faq.is_active !== false)
     .map((faq) => ({
       faq: {
         question: faq.question.trim(),
@@ -221,7 +273,7 @@ function buildFaqs(faqs?: readonly LandingFaqRecord[] | null) {
     .sort((a, b) => a.sortOrder - b.sortOrder)
     .map(({ faq }) => faq);
 
-  return parsedFaqs?.length ? parsedFaqs : fallbackFaqs();
+  return parsedFaqs;
 }
 
 export function buildLandingContent({
@@ -258,6 +310,23 @@ export function buildLandingContent({
       title: textOrFallback(settings?.cta_title, landingContent.cta.title),
       description: textOrFallback(settings?.cta_description, landingContent.cta.description),
       action: primaryAction,
+    },
+    leadForm: {
+      title: textOrFallback(settings?.lead_form_title, landingContent.leadForm.title),
+      description: textOrFallback(settings?.lead_form_description, landingContent.leadForm.description),
+      submitLabel: textOrFallback(settings?.lead_form_submit_label, landingContent.leadForm.submitLabel),
+      successTitle: optionalTextOrFallback(settings?.lead_form_success_title, landingContent.leadForm.successTitle),
+      successMessage: textOrFallback(settings?.lead_form_success_message, landingContent.leadForm.successMessage),
+      successDismissLabel: textOrFallback(settings?.lead_form_success_dismiss_label, landingContent.leadForm.successDismissLabel),
+      requiredLabel: optionalTextOrFallback(settings?.lead_form_required_label, landingContent.leadForm.requiredLabel),
+      nameLabel: textOrFallback(settings?.lead_form_name_label, landingContent.leadForm.nameLabel),
+      emailLabel: textOrFallback(settings?.lead_form_email_label, landingContent.leadForm.emailLabel),
+      phoneLabel: textOrFallback(settings?.lead_form_phone_label, landingContent.leadForm.phoneLabel),
+      phoneHelper: optionalTextOrFallback(settings?.lead_form_phone_helper, landingContent.leadForm.phoneHelper),
+      companyLabel: textOrFallback(settings?.lead_form_company_label, landingContent.leadForm.companyLabel),
+      messageLabel: textOrFallback(settings?.lead_form_message_label, landingContent.leadForm.messageLabel),
+      messageHelper: optionalTextOrFallback(settings?.lead_form_message_helper, landingContent.leadForm.messageHelper),
+      messagePlaceholder: optionalTextOrFallback(settings?.lead_form_message_placeholder, landingContent.leadForm.messagePlaceholder),
     },
     seo: {
       title: textOrFallback(page?.seo_title, fallbackSeo.title),

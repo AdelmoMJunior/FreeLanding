@@ -24,6 +24,21 @@ export type LandingSettingsFormValues = Readonly<{
   companyName: string;
   logoPath: string;
   faviconPath: string;
+  leadFormTitle: string;
+  leadFormDescription: string;
+  leadFormSubmitLabel: string;
+  leadFormSuccessTitle: string;
+  leadFormSuccessMessage: string;
+  leadFormSuccessDismissLabel: string;
+  leadFormRequiredLabel: string;
+  leadFormNameLabel: string;
+  leadFormEmailLabel: string;
+  leadFormPhoneLabel: string;
+  leadFormPhoneHelper: string;
+  leadFormCompanyLabel: string;
+  leadFormMessageLabel: string;
+  leadFormMessageHelper: string;
+  leadFormMessagePlaceholder: string;
 }>;
 
 export type LandingSettingsField = keyof LandingSettingsFormValues;
@@ -41,6 +56,9 @@ export class LandingSettingsValidationError extends Error {
 
 const requiredText = (message: string, maxLength: number) =>
   z.string().trim().min(1, message).max(maxLength, `Use no máximo ${maxLength} caracteres.`);
+
+const optionalPublicText = (maxLength: number) =>
+  z.string().trim().max(maxLength, `Use no máximo ${maxLength} caracteres.`);
 
 const ctaUrlSchema = z
   .string()
@@ -115,6 +133,21 @@ const landingSettingsSchema = z.object({
   companyName: requiredText("Informe o nome da marca.", 80),
   logoPath: optionalImagePathSchema,
   faviconPath: optionalImagePathSchema,
+  leadFormTitle: requiredText("Informe o título do formulário.", 80),
+  leadFormDescription: requiredText("Informe a descrição do formulário.", 220),
+  leadFormSubmitLabel: requiredText("Informe o texto do botão do formulário.", 48),
+  leadFormSuccessTitle: optionalPublicText(80),
+  leadFormSuccessMessage: requiredText("Informe a mensagem de sucesso do formulário.", 220),
+  leadFormSuccessDismissLabel: requiredText("Informe o texto do botão de confirmação.", 24),
+  leadFormRequiredLabel: optionalPublicText(32),
+  leadFormNameLabel: requiredText("Informe o rótulo do campo de nome.", 48),
+  leadFormEmailLabel: requiredText("Informe o rótulo do campo de e-mail.", 48),
+  leadFormPhoneLabel: requiredText("Informe o rótulo do campo de telefone.", 48),
+  leadFormPhoneHelper: optionalPublicText(140),
+  leadFormCompanyLabel: requiredText("Informe o rótulo do campo de empresa.", 48),
+  leadFormMessageLabel: requiredText("Informe o rótulo do campo de mensagem.", 48),
+  leadFormMessageHelper: optionalPublicText(160),
+  leadFormMessagePlaceholder: optionalPublicText(180),
 }).superRefine((values, context) => {
   if (values.notifyLeadsByEmail && !values.leadNotificationEmail) {
     context.addIssue({
@@ -168,6 +201,21 @@ export function parseLandingSettingsForm(formData: FormData): LandingSettingsFor
     companyName: getStringField(formData, "companyName"),
     logoPath: getStringField(formData, "logoPath"),
     faviconPath: getStringField(formData, "faviconPath"),
+    leadFormTitle: getStringField(formData, "leadFormTitle"),
+    leadFormDescription: getStringField(formData, "leadFormDescription"),
+    leadFormSubmitLabel: getStringField(formData, "leadFormSubmitLabel"),
+    leadFormSuccessTitle: getStringField(formData, "leadFormSuccessTitle"),
+    leadFormSuccessMessage: getStringField(formData, "leadFormSuccessMessage"),
+    leadFormSuccessDismissLabel: getStringField(formData, "leadFormSuccessDismissLabel"),
+    leadFormRequiredLabel: getStringField(formData, "leadFormRequiredLabel"),
+    leadFormNameLabel: getStringField(formData, "leadFormNameLabel"),
+    leadFormEmailLabel: getStringField(formData, "leadFormEmailLabel"),
+    leadFormPhoneLabel: getStringField(formData, "leadFormPhoneLabel"),
+    leadFormPhoneHelper: getStringField(formData, "leadFormPhoneHelper"),
+    leadFormCompanyLabel: getStringField(formData, "leadFormCompanyLabel"),
+    leadFormMessageLabel: getStringField(formData, "leadFormMessageLabel"),
+    leadFormMessageHelper: getStringField(formData, "leadFormMessageHelper"),
+    leadFormMessagePlaceholder: getStringField(formData, "leadFormMessagePlaceholder"),
   });
 
   if (!result.success) {

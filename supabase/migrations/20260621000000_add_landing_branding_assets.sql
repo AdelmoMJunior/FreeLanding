@@ -1,5 +1,5 @@
 alter table public.landing_settings
-  add column if not exists company_name text not null default 'FreeLanding',
+  add column if not exists company_name text not null default 'Sua Empresa',
   add column if not exists logo_path text,
   add column if not exists favicon_path text;
 

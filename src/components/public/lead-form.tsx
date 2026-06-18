@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 
+import type { PublicLandingContent } from "@/lib/landing/content";
 import type { LeadSubmissionField, LeadSubmissionFieldErrors } from "@/lib/validations/lead";
 
 type SubmitStatus = "idle" | "submitting" | "success" | "error";
@@ -20,6 +21,8 @@ type LeadFieldProps = Readonly<{
   autoComplete: string;
   errors: LeadSubmissionFieldErrors;
   helper?: string;
+  placeholder?: string;
+  requiredLabel: string;
   required?: boolean;
   type?: "email" | "tel" | "text";
   multiline?: boolean;
@@ -74,6 +77,8 @@ function LeadField({
   autoComplete,
   errors,
   helper,
+  placeholder,
+  requiredLabel,
   required = false,
   type = "text",
   multiline = false,
@@ -86,7 +91,7 @@ function LeadField({
   return (
     <div>
       <label htmlFor={id} className="block text-sm font-black text-slate-950">
-        {label} {required ? <span className="font-semibold text-slate-600">(obrigatório)</span> : null}
+        {label} {required && requiredLabel ? <span className="font-semibold text-slate-600">({requiredLabel})</span> : null}
       </label>
       {multiline ? (
         <textarea
@@ -98,7 +103,7 @@ function LeadField({
           autoComplete={autoComplete}
           aria-invalid={error ? "true" : undefined}
           aria-describedby={describedBy || undefined}
-          placeholder="Ex.: quero entender valores, prazos ou como a solução se aplica ao meu caso."
+          placeholder={placeholder}
           className={`${inputClassName} min-h-36 resize-y leading-6`}
         />
       ) : (
@@ -128,7 +133,11 @@ function LeadField({
   );
 }
 
-export function LeadForm() {
+type LeadFormProps = Readonly<{
+  copy: PublicLandingContent["leadForm"];
+}>;
+
+export function LeadForm({ copy }: LeadFormProps) {
   const reactId = useId();
   const formId = `lead-form-${reactId}`;
   const successPanelRef = useRef<HTMLDivElement>(null);
@@ -154,7 +163,7 @@ export function LeadForm() {
     const formData = new FormData(form);
 
     setStatus("submitting");
-    setMessage("Enviando pedido...");
+    setMessage(`${copy.submitLabel}...`);
     setFieldErrors({});
 
     const payload = {
@@ -183,7 +192,7 @@ export function LeadForm() {
 
       form.reset();
       setStatus("success");
-      setMessage(getResponseMessage(responsePayload, "Recebemos seu pedido. Em breve alguém entra em contato."));
+      setMessage(copy.successMessage || getResponseMessage(responsePayload, ""));
     } catch {
       setStatus("error");
       setMessage("Falha de conexão ao enviar. Tente novamente em alguns minutos.");
@@ -210,28 +219,29 @@ export function LeadForm() {
             <span className="mx-auto grid size-16 place-items-center rounded-full bg-[var(--brand-color)] text-3xl font-black text-[var(--brand-contrast)] shadow-[0_18px_40px_var(--brand-shadow)]">
               ✓
             </span>
-            <h3 className="mt-6 text-2xl font-black tracking-tight text-slate-950">
-              Pedido enviado com sucesso
-            </h3>
+            {copy.successTitle ? (
+              <h3 className="mt-6 text-2xl font-black tracking-tight text-slate-950">
+                {copy.successTitle}
+              </h3>
+            ) : null}
             <p className="mt-3 text-sm leading-6 text-slate-600">
-              {message || "Recebemos seus dados. Em breve alguém entra em contato pelo canal informado."}
+              {message || copy.successMessage}
             </p>
             <button
               type="button"
               onClick={dismissSuccess}
               className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-slate-950 px-5 text-xs font-black uppercase tracking-[0.14em] text-[var(--brand-accent-on-dark)] transition hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--brand-color)]"
             >
-              OK
+              {copy.successDismissLabel}
             </button>
           </div>
         </div>
       ) : (
         <>
       <div>
-        <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-700">Pedido de contato</p>
-        <h3 className="mt-2 text-2xl font-black tracking-tight">Fale com a equipe comercial</h3>
+        <h3 className="text-2xl font-black tracking-tight">{copy.title}</h3>
         <p className="mt-2 text-sm leading-6 text-slate-600">
-          Envie seus dados para receber um retorno objetivo sobre sua necessidade.
+          {copy.description}
         </p>
       </div>
 
@@ -239,9 +249,10 @@ export function LeadForm() {
         <LeadField
           formId={formId}
           name="name"
-          label="Nome"
+          label={copy.nameLabel}
           autoComplete="name"
           errors={fieldErrors}
+          requiredLabel={copy.requiredLabel}
           required
           maxLength={80}
         />
@@ -249,39 +260,44 @@ export function LeadForm() {
           <LeadField
             formId={formId}
             name="email"
-            label="E-mail"
+            label={copy.emailLabel}
             type="email"
             autoComplete="email"
             errors={fieldErrors}
+            requiredLabel={copy.requiredLabel}
             required
             maxLength={254}
           />
           <LeadField
             formId={formId}
             name="phone"
-            label="WhatsApp ou telefone"
+            label={copy.phoneLabel}
             type="tel"
             autoComplete="tel"
             errors={fieldErrors}
-            helper="Opcional, mas ajuda no retorno rápido."
+            helper={copy.phoneHelper}
+            requiredLabel={copy.requiredLabel}
             maxLength={40}
           />
         </div>
         <LeadField
           formId={formId}
           name="company"
-          label="Empresa"
+          label={copy.companyLabel}
           autoComplete="organization"
           errors={fieldErrors}
+          requiredLabel={copy.requiredLabel}
           maxLength={100}
         />
         <LeadField
           formId={formId}
           name="message"
-          label="Mensagem"
+          label={copy.messageLabel}
           autoComplete="off"
           errors={fieldErrors}
-          helper="Opcional. Use se quiser adiantar o principal ponto da conversa."
+          helper={copy.messageHelper}
+          placeholder={copy.messagePlaceholder}
+          requiredLabel={copy.requiredLabel}
           multiline
           maxLength={1000}
         />
@@ -311,7 +327,7 @@ export function LeadForm() {
         disabled={status === "submitting"}
         className="mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-slate-950 px-5 text-xs font-black uppercase tracking-[0.14em] text-[var(--brand-accent-on-dark)] transition hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--brand-color)] disabled:cursor-not-allowed disabled:bg-slate-400 disabled:text-slate-100"
       >
-        {status === "submitting" ? "Enviando..." : "Pedir contato"}
+        {status === "submitting" ? `${copy.submitLabel}...` : copy.submitLabel}
       </button>
         </>
       )}

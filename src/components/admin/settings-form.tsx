@@ -478,6 +478,125 @@ export function AdminSettingsForm({ initialValues }: AdminSettingsFormProps) {
       </section>
 
       <section
+        aria-labelledby="settings-lead-form-title"
+        className="rounded-[1.75rem] border border-white bg-white/85 p-6 shadow-[0_18px_50px_rgba(15,23,42,0.07)]"
+      >
+        <h2 id="settings-lead-form-title" className="text-xl font-black tracking-tight text-slate-950">
+          Textos do formulário público
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          Ajuste os textos visíveis no formulário de contato da página pública.
+        </p>
+        <div className="mt-5 grid gap-5 md:grid-cols-2">
+          <SettingsField
+            name="leadFormTitle"
+            label="Título do formulário"
+            defaultValue={initialValues.leadFormTitle}
+            errors={fieldErrors}
+          />
+          <SettingsField
+            name="leadFormSubmitLabel"
+            label="Texto do botão de envio"
+            defaultValue={initialValues.leadFormSubmitLabel}
+            errors={fieldErrors}
+          />
+          <div className="md:col-span-2">
+            <SettingsField
+              name="leadFormDescription"
+              label="Descrição do formulário"
+              defaultValue={initialValues.leadFormDescription}
+              errors={fieldErrors}
+              multiline
+            />
+          </div>
+          <SettingsField
+            name="leadFormSuccessTitle"
+            label="Título após envio"
+            defaultValue={initialValues.leadFormSuccessTitle}
+            errors={fieldErrors}
+            helper="Pode ficar vazio se você quiser mostrar apenas a mensagem."
+          />
+          <SettingsField
+            name="leadFormSuccessDismissLabel"
+            label="Botão após envio"
+            defaultValue={initialValues.leadFormSuccessDismissLabel}
+            errors={fieldErrors}
+          />
+          <div className="md:col-span-2">
+            <SettingsField
+              name="leadFormSuccessMessage"
+              label="Mensagem após envio"
+              defaultValue={initialValues.leadFormSuccessMessage}
+              errors={fieldErrors}
+              multiline
+            />
+          </div>
+          <SettingsField
+            name="leadFormRequiredLabel"
+            label="Texto de obrigatório"
+            defaultValue={initialValues.leadFormRequiredLabel}
+            errors={fieldErrors}
+            helper="Deixe vazio para ocultar o marcador visual de obrigatório."
+          />
+          <SettingsField
+            name="leadFormNameLabel"
+            label="Rótulo do campo nome"
+            defaultValue={initialValues.leadFormNameLabel}
+            errors={fieldErrors}
+          />
+          <SettingsField
+            name="leadFormEmailLabel"
+            label="Rótulo do campo e-mail"
+            defaultValue={initialValues.leadFormEmailLabel}
+            errors={fieldErrors}
+          />
+          <SettingsField
+            name="leadFormPhoneLabel"
+            label="Rótulo do campo telefone"
+            defaultValue={initialValues.leadFormPhoneLabel}
+            errors={fieldErrors}
+          />
+          <SettingsField
+            name="leadFormCompanyLabel"
+            label="Rótulo do campo empresa"
+            defaultValue={initialValues.leadFormCompanyLabel}
+            errors={fieldErrors}
+          />
+          <SettingsField
+            name="leadFormMessageLabel"
+            label="Rótulo do campo mensagem"
+            defaultValue={initialValues.leadFormMessageLabel}
+            errors={fieldErrors}
+          />
+          <div className="md:col-span-2">
+            <SettingsField
+              name="leadFormPhoneHelper"
+              label="Ajuda do campo telefone"
+              defaultValue={initialValues.leadFormPhoneHelper}
+              errors={fieldErrors}
+            />
+          </div>
+          <div className="md:col-span-2">
+            <SettingsField
+              name="leadFormMessageHelper"
+              label="Ajuda do campo mensagem"
+              defaultValue={initialValues.leadFormMessageHelper}
+              errors={fieldErrors}
+            />
+          </div>
+          <div className="md:col-span-2">
+            <SettingsField
+              name="leadFormMessagePlaceholder"
+              label="Placeholder do campo mensagem"
+              defaultValue={initialValues.leadFormMessagePlaceholder}
+              errors={fieldErrors}
+              multiline
+            />
+          </div>
+        </div>
+      </section>
+
+      <section
         aria-labelledby="settings-contact-title"
         className="rounded-[1.75rem] border border-white bg-white/85 p-6 shadow-[0_18px_50px_rgba(15,23,42,0.07)]"
       >

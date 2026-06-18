@@ -8,15 +8,13 @@ type ModulesSectionProps = Readonly<{
 }>;
 
 export function ModulesSection({ modules }: ModulesSectionProps) {
+  if (!modules.length) {
+    return null;
+  }
+
   return (
-    <SectionContainer id="modulos" labelledBy="modulos-title">
-      <div className="max-w-3xl">
-        <p className="text-sm font-bold uppercase tracking-[0.24em] text-slate-700">Destaques</p>
-        <h2 id="modulos-title" className="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-5xl">
-          Conheça os principais pontos da proposta.
-        </h2>
-      </div>
-      <div className="mt-10 grid gap-4 md:grid-cols-2">
+    <SectionContainer id="modulos">
+      <div className="grid gap-4 md:grid-cols-2">
         {modules.map((module, index) => (
           <article key={`${module.title}-${index}`} className="group rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-950/10">
             {module.imagePath ? (
