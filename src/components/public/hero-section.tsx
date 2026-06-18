@@ -38,14 +38,14 @@ export function HeroSection({ content }: HeroSectionProps) {
           <div className="rounded-[1.5rem] bg-slate-950/80 p-5 ring-1 ring-white/10">
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
               <div>
-                <p className="text-sm text-slate-400">Painel da landing</p>
-                <p className="font-bold text-white">Publicação ativa</p>
+                <p className="text-sm text-slate-400">Conheça {content.company}</p>
+                <p className="font-bold text-white">Informações essenciais</p>
               </div>
-              <span className="rounded-full bg-[var(--brand-soft)] px-3 py-1 text-sm font-semibold text-white">Online</span>
+              <span className="rounded-full bg-[var(--brand-soft)] px-3 py-1 text-sm font-semibold text-white">Disponível</span>
             </div>
             {content.logoPath ? (
               <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.06] p-5">
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">Logo da marca</p>
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">Marca</p>
                 <div className="relative mt-4 flex min-h-44 items-center justify-center overflow-hidden rounded-2xl bg-white p-6">
                   <Image
                     src={content.logoPath}
@@ -68,9 +68,9 @@ export function HeroSection({ content }: HeroSectionProps) {
               </div>
             )}
             <div className="mt-5 rounded-2xl bg-[var(--brand-color)] p-4 text-[var(--brand-contrast)]">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em]">Resumo visual</p>
-              <p className="mt-2 text-3xl font-black">12 leads</p>
-              <p className="mt-1 text-sm font-medium">Exemplo visual de contatos gerados</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em]">Próximo passo</p>
+              <p className="mt-2 text-3xl font-black">Fale com a equipe</p>
+              <p className="mt-1 text-sm font-medium">Envie uma mensagem para receber orientação e seguir com segurança.</p>
             </div>
           </div>
         </div>

@@ -11,9 +11,9 @@ export function ModulesSection({ modules }: ModulesSectionProps) {
   return (
     <SectionContainer id="modulos" labelledBy="modulos-title">
       <div className="max-w-3xl">
-        <p className="text-sm font-bold uppercase tracking-[0.24em] text-slate-700">Módulos</p>
+        <p className="text-sm font-bold uppercase tracking-[0.24em] text-slate-700">Destaques</p>
         <h2 id="modulos-title" className="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-5xl">
-          Peças essenciais da operação no mesmo lugar.
+          Conheça os principais pontos da proposta.
         </h2>
       </div>
       <div className="mt-10 grid gap-4 md:grid-cols-2">

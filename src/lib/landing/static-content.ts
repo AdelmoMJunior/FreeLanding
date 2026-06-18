@@ -1,62 +1,62 @@
 export const landingContent = {
-  company: "FreeLanding",
+  company: "Sua Empresa",
   eyebrow: "",
   hero: {
-    title: "Apresente sua oferta com clareza e gere contatos qualificados.",
+    title: "Conheça uma solução pensada para facilitar sua decisão.",
     description:
-      "Mostre o que sua empresa entrega, organize as informações mais importantes e facilite o primeiro contato com clientes interessados.",
+      "Veja os principais diferenciais, entenda como podemos ajudar e fale com a equipe pelo canal mais prático para você.",
     primaryAction: "Ver destaques",
     secondaryAction: "Ver benefícios",
-    proof: "Página preparada para ser adaptada à sua marca, oferta e canais de atendimento.",
+    proof: "Atendimento direto, informações objetivas e próximos passos sem complicação.",
     metrics: [
-      { value: "Oferta", label: "mensagem central clara" },
-      { value: "Conteúdo", label: "seções organizadas" },
-      { value: "Leads", label: "contatos em um só lugar" },
+      { value: "Clareza", label: "diferenciais bem apresentados" },
+      { value: "Contato", label: "conversa direta com a equipe" },
+      { value: "Decisão", label: "informações para avançar com segurança" },
     ],
   },
   modules: [
     {
-      title: "Destaques da oferta",
+      title: "Soluções para sua necessidade",
       description:
-        "Apresente os pontos mais importantes do serviço, produto ou solução para que o visitante entenda rapidamente se faz sentido conversar.",
+        "Conheça os principais recursos, serviços ou diferenciais que podem ajudar no que você procura.",
     },
     {
       title: "Benefícios objetivos",
       description:
-        "Mostre ganhos práticos em linguagem simples, sem depender de apresentação longa antes do primeiro contato.",
+        "Entenda os ganhos práticos da proposta em uma linguagem simples e direta.",
     },
     {
       title: "Provas e diferenciais",
       description:
-        "Organize argumentos, imagens e exemplos que ajudam o cliente a confiar na proposta antes de enviar os dados.",
+        "Veja argumentos, imagens e exemplos que ajudam a avaliar a solução com mais confiança.",
     },
     {
       title: "Contato facilitado",
       description:
-        "Direcione o visitante para formulário, WhatsApp ou outro canal configurado para transformar interesse em conversa comercial.",
+        "Fale com a equipe para tirar dúvidas, receber orientação e entender os próximos passos.",
     },
   ],
   benefits: [
-    "Mensagem principal mais clara para quem chega pela primeira vez.",
-    "Informações importantes reunidas em uma página fácil de navegar.",
-    "Contato direto com pessoas realmente interessadas na oferta.",
-    "Visual alinhado à marca, com textos e seções editáveis pelo painel.",
+    "Entenda rapidamente se a solução faz sentido para a sua necessidade.",
+    "Acesse informações importantes de forma simples e organizada.",
+    "Converse diretamente com a equipe para esclarecer dúvidas.",
+    "Avance para o próximo passo com mais segurança e clareza.",
   ],
   faq: [
     {
-      question: "Posso adaptar os textos para qualquer tipo de negócio?",
+      question: "Como faço para receber atendimento?",
       answer:
-        "Sim. Os principais textos, chamadas, módulos, benefícios, perguntas e canais de contato podem ser ajustados pelo painel administrativo.",
+        "Envie seus dados na área de contato ou chame a equipe pelo canal disponível. Depois disso, retornamos com as informações necessárias.",
     },
     {
-      question: "A página pode receber contatos de clientes?",
+      question: "A solução atende minha necessidade?",
       answer:
-        "Pode. O formulário registra os leads no painel e, quando configurado, também envia uma notificação por e-mail para a equipe.",
+        "A melhor forma de confirmar é contar brevemente o que você procura. A equipe avalia o cenário e orienta os próximos passos.",
     },
     {
-      question: "Consigo usar a identidade visual da minha marca?",
+      question: "Posso falar com a equipe antes de decidir?",
       answer:
-        "Sim. A cor principal da landing pode ser configurada no painel para deixar os botões e destaques mais próximos da marca.",
+        "Sim. O contato inicial serve para tirar dúvidas, entender sua situação e indicar o caminho mais adequado.",
     },
   ],
   cta: {

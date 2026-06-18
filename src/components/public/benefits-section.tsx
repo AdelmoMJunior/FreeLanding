@@ -12,10 +12,10 @@ export function BenefitsSection({ benefits }: BenefitsSectionProps) {
         <div className="border-b border-white/10 p-7 sm:p-10 lg:border-b-0 lg:border-r">
           <p className="text-sm font-bold uppercase tracking-[0.24em] text-[var(--brand-accent-on-dark)]">Benefícios</p>
           <h2 id="beneficios-title" className="mt-3 text-3xl font-black tracking-tight sm:text-5xl">
-            Menos improviso no dia a dia da loja.
+            Veja como a solução pode ajudar.
           </h2>
           <p className="mt-5 leading-8 text-slate-300">
-            A proposta visual prioriza clareza: o visitante entende rapidamente quais rotinas o sistema cobre e por que isso importa para a operação.
+            Confira os principais ganhos e entenda se a proposta combina com o que você procura.
           </p>
         </div>
         <ul className="grid gap-px bg-white/10 sm:grid-cols-2" aria-label="Lista de benefícios">

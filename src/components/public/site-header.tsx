@@ -45,7 +45,7 @@ export function SiteHeader({ content }: SiteHeaderProps) {
             Contato
           </a>
           <nav className="hidden items-center gap-6 text-sm text-slate-200 md:flex" aria-label="Navegação principal">
-            <a className="hover:text-white" href="#modulos">Módulos</a>
+            <a className="hover:text-white" href="#modulos">Destaques</a>
             <a className="hover:text-white" href="#beneficios">Benefícios</a>
             <a className="hover:text-white" href="#faq">FAQ</a>
             <a className="hover:text-white" href="#contato">Contato</a>

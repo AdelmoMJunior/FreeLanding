@@ -84,10 +84,25 @@ describe("buildLandingContent", () => {
       },
     });
 
-    expect(content.hero.title).toBe("Apresente sua oferta com clareza e gere contatos qualificados.");
+    expect(content.hero.title).toBe("Conheça uma solução pensada para facilitar sua decisão.");
     expect(content.hero.primaryAction).toEqual({ label: "Ver destaques", href: "#modulos" });
-    expect(content.seo.title).toBe("FreeLanding");
+    expect(content.seo.title).toBe("Sua Empresa");
     expect(content.whatsapp).toBeNull();
+  });
+
+  it("keeps public fallback copy focused on the customer's offer", () => {
+    const content = buildLandingContent();
+    const publicCopy = JSON.stringify({
+      company: content.company,
+      hero: content.hero,
+      modules: content.modules,
+      benefits: content.benefits,
+      faq: content.faq,
+      cta: content.cta,
+      seo: content.seo,
+    }).toLowerCase();
+
+    expect(publicCopy).not.toMatch(/landing|painel|admin|edit[aá]veis|adaptada|formul[aá]rio registra|notifica[cç][aã]o/);
   });
 
   it("omits whatsapp link when the number has no usable digits", () => {
@@ -257,7 +272,7 @@ describe("buildLandingContent", () => {
       ],
     });
 
-    expect(content.modules[0]?.title).toBe("Destaques da oferta");
+    expect(content.modules[0]?.title).toBe("Soluções para sua necessidade");
   });
 
   it("uses only active database benefits ordered by sort order", () => {
@@ -314,7 +329,7 @@ describe("buildLandingContent", () => {
       ],
     });
 
-    expect(content.benefits[0]?.title).toBe("Mensagem principal mais clara para quem chega pela primeira vez.");
+    expect(content.benefits[0]?.title).toBe("Entenda rapidamente se a solução faz sentido para a sua necessidade.");
   });
 
   it("uses only active database FAQs ordered by sort order", () => {
@@ -365,6 +380,6 @@ describe("buildLandingContent", () => {
       ],
     });
 
-    expect(content.faq[0]?.question).toBe("Posso adaptar os textos para qualquer tipo de negócio?");
+    expect(content.faq[0]?.question).toBe("Como faço para receber atendimento?");
   });
 });
